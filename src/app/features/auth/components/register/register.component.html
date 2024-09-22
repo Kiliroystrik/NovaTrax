@@ -1,1 +1,105 @@
-<p>register works!</p>
+<div class="flex flex-col items-center justify-center w-full gap-1">
+    <!-- Progress bar des étapes -->
+    <ul class="steps steps-vertical lg:steps-horizontal">
+        <li class="step hover:step-secondary hover:cursor-pointer" [ngClass]="{ 'step-primary': step >= 1 }"
+            (click)="goToStep(1)">
+            Informations sur
+            l'entreprise
+        </li>
+        <li class="step hover:step-secondary hover:cursor-pointer" [ngClass]="{ 'step-primary': step >= 2 }"
+            (click)="goToStep(2)">Informations utilisateur</li>
+        <li class="step hover:step-secondary hover:cursor-pointer" [ngClass]="{ 'step-primary': step >= 3 }"
+            (click)="goToStep(3)">Validation</li>
+    </ul>
+
+    <!-- Formulaire multi-étapes -->
+    <form class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl" [formGroup]="registerForm"
+        (ngSubmit)="onSubmit()">
+        @if (step === 1) {
+        <div class="card-body">
+            <h2 class="card-title">Informations sur l'entreprise</h2>
+            <div class="form-control">
+                <label class="label" for="companyName">
+                    <span class="label-text">Nom de l'entreprise</span>
+                </label>
+                <input id="companyName" type="text" formControlName="companyName" placeholder="Nom de l'entreprise"
+                    class="input input-bordered" />
+            </div>
+            <div class="form-control">
+                <label class="label" for="contactEmail">
+                    <span class="label-text">Email de contact</span>
+                </label>
+                <input id="contactEmail" type="email" formControlName="contactEmail" placeholder="Email de contact"
+                    class="input input-bordered" />
+            </div>
+            <div class="form-control">
+                <label class="label" for="contactPhone">
+                    <span class="label-text">Numéro de téléphone</span>
+                </label>
+                <input id="contactPhone" type="text" formControlName="contactPhone" placeholder="Numéro de téléphone"
+                    class="input input-bordered" />
+            </div>
+            <div class="form-control mt-6">
+                <button class="btn btn-primary" type="button" (click)="nextStep()">Suivant</button>
+            </div>
+        </div>
+        }
+
+        @if(step === 2){
+        <div class="card-body">
+            <h2 class="card-title">Informations utilisateur</h2>
+            <div class="form-control">
+                <label class="label" for="userFirstName">
+                    <span class="label-text">Prénom</span>
+                </label>
+                <input id="userFirstName" type="text" formControlName="userFirstName" placeholder="Prénom"
+                    class="input input-bordered" />
+            </div>
+            <div class="form-control">
+                <label class="label" for="userLastName">
+                    <span class="label-text">Nom</span>
+                </label>
+                <input id="userLastName" type="text" formControlName="userLastName" placeholder="Nom"
+                    class="input input-bordered" />
+            </div>
+            <div class="form-control">
+                <label class="label" for="userEmail">
+                    <span class="label-text">Email</span>
+                </label>
+                <input id="userEmail" type="email" formControlName="userEmail" placeholder="Email"
+                    class="input input-bordered" />
+            </div>
+            <div class="form-control">
+                <label class="label" for="userPassword">
+                    <span class="label-text">Mot de passe</span>
+                </label>
+                <input id="userPassword" type="password" formControlName="userPassword" placeholder="Mot de passe"
+                    class="input input-bordered" />
+            </div>
+            <div class="form-control mt-6 gap-2">
+                <button class="btn btn-neutral" type="button" (click)="previousStep()">Précédent</button>
+                <button class="btn btn-primary" type="button" (click)="nextStep()">Suivant</button>
+            </div>
+        </div>
+        }
+
+        @if(step === 3){
+        <div class="card-body">
+            <h2 class="card-title">Validation</h2>
+            <p>Veuillez vérifier vos informations avant de soumettre :</p>
+            <ul>
+                <li><strong>Entreprise :</strong> {{ registerForm.value.companyName }}</li>
+                <li><strong>Email de contact :</strong> {{ registerForm.value.contactEmail }}</li>
+                <li><strong>Téléphone de contact :</strong> {{ registerForm.value.contactPhone }}</li>
+                <li><strong>Prénom :</strong> {{ registerForm.value.userFirstName }}</li>
+                <li><strong>Nom :</strong> {{ registerForm.value.userLastName }}</li>
+                <li><strong>Email utilisateur :</strong> {{ registerForm.value.userEmail }}</li>
+            </ul>
+            <div class="form-control mt-6 gap-2">
+                <button class="btn btn-neutral" type="button" (click)="previousStep()">Précédent</button>
+                <button class="btn btn-primary" type="submit">Confirmer l'enregistrement</button>
+            </div>
+        </div>
+        }
+    </form>
+</div>
