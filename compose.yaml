@@ -10,3 +10,8 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+    networks:
+      - shared-novatrax # Ajout du réseau
+
+networks:
+  shared-novatrax:

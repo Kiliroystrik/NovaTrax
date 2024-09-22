@@ -1,0 +1,24 @@
+<div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+    <form class="card-body" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-control">
+            <label class="label" for="username">
+                <span class="label-text">Email</span>
+            </label>
+            <input id="username" type="email" formControlName="username" placeholder="email"
+                class="input input-bordered" required />
+        </div>
+        <div class="form-control">
+            <label class="label" for="password">
+                <span class="label-text">Password</span>
+            </label>
+            <input type="password" id="password" formControlName="password" placeholder="password"
+                class="input input-bordered" required />
+            <label class="label">
+                <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
+            </label>
+        </div>
+        <div class="form-control mt-6">
+            <button class="btn btn-primary" type="submit">Se connecter</button>
+        </div>
+    </form>
+</div>

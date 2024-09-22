@@ -1,0 +1,4 @@
+.loading {
+    position: relative; /* Assurez-vous que l'icône a un positionnement relatif */
+    z-index: -1; /* Z-index plus élevé que le fond obscurcissant */
+}
