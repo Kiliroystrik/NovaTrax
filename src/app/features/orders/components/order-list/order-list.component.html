@@ -31,12 +31,11 @@
         <!-- Précédent -->
         <button class="btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">Précédent</button>
 
-        <!-- Première page -->
+        <!-- Première page (toujours affichée) -->
         <button class="btn" [class.btn-active]="currentPage === 1" (click)="goToPage(1)">1</button>
 
         <!-- Ellipsis si la page courante est loin de la première page -->
-        @if(currentPage > 3)
-        {
+        @if (currentPage > 3) {
         <ng-container>
             <button class="btn btn-disabled">...</button>
         </ng-container>
@@ -57,10 +56,14 @@
             </ng-container>
             }
 
-            <!-- Dernière page -->
-            <button class="btn" [class.btn-active]="currentPage === totalPages" (click)="goToPage(totalPages)">
-                {{ totalPages }}
-            </button>
+            <!-- Dernière page (toujours affichée si plus d'une page) -->
+            @if (totalPages > 1) {
+            <ng-container>
+                <button class="btn" [class.btn-active]="currentPage === totalPages" (click)="goToPage(totalPages)">
+                    {{ totalPages }}
+                </button>
+            </ng-container>
+            }
 
             <!-- Suivant -->
             <button class="btn" [disabled]="currentPage === totalPages"

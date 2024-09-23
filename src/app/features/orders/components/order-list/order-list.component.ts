@@ -33,14 +33,23 @@ export class OrderListComponent implements OnInit {
 
   getPagesAroundCurrent(): number[] {
     const range = 2; // Nombre de pages à afficher autour de la page actuelle
-    const pages = [];
+    const pages: number[] = [];
 
+    // Si il n'y a qu'une seule page ou seulement 2 pages, pas besoin de pagination
+    if (this.totalPages <= 1) {
+      return pages;
+    }
+
+    // Ajouter les pages autour de la page actuelle, sans inclure la première (1) ni la dernière page
     for (let i = Math.max(2, this.currentPage - range); i <= Math.min(this.totalPages - 1, this.currentPage + range); i++) {
       pages.push(i);
     }
 
     return pages;
   }
+
+
+
 
 
   goToPage(page: number) {
