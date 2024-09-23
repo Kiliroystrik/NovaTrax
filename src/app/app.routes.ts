@@ -6,6 +6,7 @@ import { PrivateLayoutComponent } from './layouts/private-layout/private-layout.
 import { authGuard } from './features/auth/guards/auth.guard';
 import { DashboardComponent } from './features/dashboard/components/dashboard/dashboard.component';
 import { HomeComponent } from './features/saas/components/home/home.component';
+import { OrderListComponent } from './features/orders/components/order-list/order-list.component';
 
 export const routes: Routes = [
 
@@ -42,6 +43,7 @@ export const routes: Routes = [
         canActivate: [authGuard],  // Utilisation du guard
         children: [
             { path: 'dashboard', component: DashboardComponent },
+            { path: 'commandes', component: OrderListComponent },
             // D'autres pages accessibles aux utilisateurs connectés
         ],
     },
