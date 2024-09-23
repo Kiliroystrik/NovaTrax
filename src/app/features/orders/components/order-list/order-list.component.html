@@ -1,0 +1,72 @@
+<div class="overflow-x-auto">
+    <table class="table w-full">
+        <thead>
+            <tr>
+                <th>Numéro de commande</th>
+                <th>Nom du client</th>
+                <th>Date de commande</th>
+                <th>Date de livraison prévue</th>
+                <th>Status</th>
+                <th>Détails</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (order of orders; track order.id) {
+            <tr>
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.customerName }}</td>
+                <td>{{ order.orderDate | date: 'short' }}</td>
+                <td>{{ order.expectedDeliveryDate | date: 'short' }}</td>
+                <td>{{ order.status }}</td>
+                <td><button class="btn btn-primary btn-xs">Détails</button></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="flex justify-center mt-4">
+    <div class="btn-group">
+        <!-- Précédent -->
+        <button class="btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">Précédent</button>
+
+        <!-- Première page (toujours affichée) -->
+        <button class="btn" [class.btn-active]="currentPage === 1" (click)="goToPage(1)">1</button>
+
+        <!-- Ellipsis si la page courante est loin de la première page -->
+        @if (currentPage > 3) {
+        <ng-container>
+            <button class="btn btn-disabled">...</button>
+        </ng-container>
+        }
+
+        <!-- Pages proches de la page actuelle (de currentPage-2 à currentPage+2) -->
+        @for (page of getPagesAroundCurrent(); track $index) {
+        <ng-container>
+            <button class="btn" [class.btn-active]="page === currentPage" (click)="goToPage(page)">
+                {{ page }}
+            </button>
+        </ng-container>
+        }
+
+        <!-- Ellipsis si la page courante est loin de la dernière page -->
+        @if (currentPage < totalPages - 2) { <ng-container>
+            <button class="btn btn-disabled">...</button>
+            </ng-container>
+            }
+
+            <!-- Dernière page (toujours affichée si plus d'une page) -->
+            @if (totalPages > 1) {
+            <ng-container>
+                <button class="btn" [class.btn-active]="currentPage === totalPages" (click)="goToPage(totalPages)">
+                    {{ totalPages }}
+                </button>
+            </ng-container>
+            }
+
+            <!-- Suivant -->
+            <button class="btn" [disabled]="currentPage === totalPages"
+                (click)="goToPage(currentPage + 1)">Suivant</button>
+    </div>
+</div>

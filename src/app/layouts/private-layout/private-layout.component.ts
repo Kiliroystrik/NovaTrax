@@ -1,13 +1,13 @@
 import { LoadingService } from './../../shared/services/loading/loading.service';
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './partials/header/header.component';
 import { LoadingComponent } from '../../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-private-layout',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, LoadingComponent],
+  imports: [RouterOutlet, HeaderComponent, LoadingComponent, RouterLink],
   templateUrl: './private-layout.component.html',
   styleUrl: './private-layout.component.scss'
 })
