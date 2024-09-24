@@ -12,9 +12,9 @@
         </thead>
         <tbody>
             @for (order of orders; track order.id) {
-            <tr>
+            <tr class="hover:bg-base-200">
                 <td>{{ order.orderNumber }}</td>
-                <td>{{ order.customerName }}</td>
+                <td>{{ order.client.name }}</td>
                 <td>{{ order.orderDate | date: 'short' }}</td>
                 <td>{{ order.expectedDeliveryDate | date: 'short' }}</td>
                 <td>{{ order.status }}</td>
