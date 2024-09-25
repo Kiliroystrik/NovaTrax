@@ -18,7 +18,8 @@
                 <td>{{ order.orderDate | date: 'short' }}</td>
                 <td>{{ order.expectedDeliveryDate | date: 'short' }}</td>
                 <td>{{ order.status }}</td>
-                <td><button class="btn btn-primary btn-xs">Détails</button></td>
+                <td><button class="btn btn-primary btn-xs" [routerLink]="['/commandes', order.id]">Détails</button>
+                </td>
             </tr>
             }
         </tbody>

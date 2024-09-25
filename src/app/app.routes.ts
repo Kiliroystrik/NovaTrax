@@ -7,6 +7,7 @@ import { authGuard } from './features/auth/guards/auth.guard';
 import { DashboardComponent } from './features/dashboard/components/dashboard/dashboard.component';
 import { HomeComponent } from './features/saas/components/home/home.component';
 import { OrderListComponent } from './features/orders/components/order-list/order-list.component';
+import { OrderDetailComponent } from './features/orders/components/order-detail/order-detail.component';
 
 export const routes: Routes = [
 
@@ -44,6 +45,7 @@ export const routes: Routes = [
         children: [
             { path: 'dashboard', component: DashboardComponent },
             { path: 'commandes', component: OrderListComponent },
+            { path: 'commandes/:id', component: OrderDetailComponent },
             // D'autres pages accessibles aux utilisateurs connectés
         ],
     },
