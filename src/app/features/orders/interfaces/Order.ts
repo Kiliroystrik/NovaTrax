@@ -1,5 +1,5 @@
 import { Delivery } from "./Delivery";
-import { Client } from './Client';
+import { Client } from '../../client/components/interfaces/Client';
 
 export interface Order {
     id: number;

@@ -1,32 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { OrderService } from '../../services/order.service';
+import { Component } from '@angular/core';
+import { ClientService } from '../../services/client.service';
+import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { OrderFormComponent } from '../order-form/order-form.component';
 
 @Component({
-  selector: 'app-order-list',
+  selector: 'app-client-list',
   standalone: true,
-  imports: [DatePipe, RouterLink, OrderFormComponent],
-  templateUrl: './order-list.component.html',
-  styleUrls: ['./order-list.component.scss'],
+  imports: [DatePipe, RouterLink],
+  templateUrl: './client-list.component.html',
+  styleUrl: './client-list.component.scss'
 })
-export class OrderListComponent implements OnInit {
-  orders: any[] = [];
+export class ClientListComponent {
+  clients: any[] = [];
   totalItems: number = 0;
   currentPage: number = 1;
   totalPages: number = 1;
   limit: number = 10;
 
-  constructor(private orderService: OrderService) { }
+  constructor(private clientService: ClientService) { }
 
   ngOnInit() {
-    this.fetchOrders();
+    this.fetchClients();
   }
 
-  fetchOrders() {
-    this.orderService.getOrders(this.currentPage, this.limit).subscribe((response) => {
-      this.orders = response.items;
+  fetchClients() {
+    this.clientService.getClients(this.currentPage, this.limit).subscribe((response) => {
+      this.clients = response.items;
       this.totalItems = response.totalItems;
       this.currentPage = response.currentPage;
       this.totalPages = response.totalPages;
@@ -57,7 +56,7 @@ export class OrderListComponent implements OnInit {
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.fetchOrders();
+      this.fetchClients();
     }
   }
 
@@ -79,10 +78,10 @@ export class OrderListComponent implements OnInit {
 
   // Gérer la soumission du formulaire
   onOrderFormSubmit(orderData: any) {
-    this.orderService.createOrder(orderData).subscribe({
+    this.clientService.createClient(orderData).subscribe({
       next: () => {
         this.closeModal(); // Ferme la modale après soumission
-        this.fetchOrders();
+        this.fetchClients();
         console.log('Commande creée avec succès !');
       },
       error: (error) => {
