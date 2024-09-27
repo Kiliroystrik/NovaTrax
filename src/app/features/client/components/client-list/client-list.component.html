@@ -1,30 +1,22 @@
-<!-- Bouton pour ouvrir la modale de création de commande -->
+<!-- Bouton pour ouvrir la modale de création de clients -->
 <div class="flex justify-between mb-4">
-    <h2 class="text-xl font-bold">Liste des commandes</h2>
-    <button class="btn btn-primary" (click)="openModal()">Nouvelle commande</button>
+    <h2 class="text-xl font-bold">Liste des clients</h2>
+    <button class="btn btn-primary" (click)="openModal()">Nouveau client</button>
 </div>
 
 <div class="overflow-x-auto">
     <table class="table w-full">
         <thead>
             <tr>
-                <th>Numéro de commande</th>
                 <th>Nom du client</th>
-                <th>Date de commande</th>
-                <th>Date de livraison prévue</th>
-                <th>Status</th>
                 <th>Détails</th>
             </tr>
         </thead>
         <tbody>
-            @for (order of orders; track order.id) {
+            @for (client of clients; track client.id) {
             <tr class="hover:bg-base-200">
-                <td>{{ order.orderNumber }}</td>
-                <td>{{ order.client.name }}</td>
-                <td>{{ order.orderDate | date: 'short' }}</td>
-                <td>{{ order.expectedDeliveryDate | date: 'short' }}</td>
-                <td>{{ order.status }}</td>
-                <td><button class="btn btn-primary btn-xs" [routerLink]="['/commandes', order.id]">Détails</button>
+                <td>{{ client.name }}</td>
+                <td><button class="btn btn-primary btn-xs" [routerLink]="['/clients', client.id]">Détails</button>
                 </td>
             </tr>
             }
@@ -79,10 +71,10 @@
 </div>
 
 <!-- Modale pour la création d'une commande -->
-<dialog id="orderCreationModal" class="modal modal-bottom sm:modal-middle">
+<dialog id="clientCreationModal" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box">
-        <h3 class="text-lg font-bold">Créer une nouvelle commande</h3>
-        <app-order-form (submitForm)="onOrderFormSubmit($event)"></app-order-form>
+        <h3 class="text-lg font-bold">Créer un nouveau client</h3>
+        <!-- <app-client-form (submitForm)="onOrderFormSubmit($event)"></app-client-form> -->
         <div class="modal-action">
             <button class="btn btn-secondary" (click)="closeModal()">Annuler</button>
         </div>

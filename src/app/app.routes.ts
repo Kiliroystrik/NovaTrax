@@ -8,6 +8,7 @@ import { DashboardComponent } from './features/dashboard/components/dashboard/da
 import { HomeComponent } from './features/saas/components/home/home.component';
 import { OrderListComponent } from './features/orders/components/order-list/order-list.component';
 import { OrderDetailComponent } from './features/orders/components/order-detail/order-detail.component';
+import { ClientListComponent } from './features/client/components/client-list/client-list.component';
 
 export const routes: Routes = [
 
@@ -46,6 +47,8 @@ export const routes: Routes = [
             { path: 'dashboard', component: DashboardComponent },
             { path: 'commandes', component: OrderListComponent },
             { path: 'commandes/:id', component: OrderDetailComponent },
+            { path: 'clients', component: ClientListComponent },
+            { path: 'clients/:id', component: ClientListComponent },
             // D'autres pages accessibles aux utilisateurs connectés
         ],
     },
