@@ -36,14 +36,19 @@ export function tokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
 function handle401Error(
     request: HttpRequest<unknown>,
     next: HttpHandlerFn,
-    authService: AuthService  // Injecter authService en paramètre
+    authService: AuthService
 ): Observable<HttpEvent<unknown>> {
     return authService.refreshAccessToken().pipe(
         switchMap((newTokens: any) => {
-            const clonedRequest = request.clone({
-                setHeaders: { Authorization: `Bearer ${newTokens.token}` }
-            });
-            return next(clonedRequest);  // Réessayer la requête avec le nouveau token
+            if (newTokens && newTokens.token) {
+                const clonedRequest = request.clone({
+                    setHeaders: { Authorization: `Bearer ${newTokens.token}` }
+                });
+                return next(clonedRequest);  // Réessayer la requête avec le nouveau token
+            } else {
+                authService.logout(); // Si pas de nouveaux tokens valides
+                return throwError(() => new Error('Token refresh failed'));
+            }
         }),
         catchError(error => {
             authService.logout();  // Déconnecter en cas d'échec
@@ -51,4 +56,5 @@ function handle401Error(
         })
     );
 }
+
 

@@ -17,22 +17,45 @@ export class OrderService {
   getOrders(page: number = 1, limit: number = 10): Observable<PaginatedResponse<any>> {
     this.loadingService.show();
     let params = new HttpParams().set('page', page).set('limit', limit);
-    return this.http.get<PaginatedResponse<any>>(this.apiUrl + '/api/client/orders', { params }).pipe(
+    return this.http.get<PaginatedResponse<any>>(this.apiUrl + '/api/orders', { params }).pipe(
       finalize(() => this.loadingService.hide())
-    )
+    );
   }
 
   getOrder(id: number): Observable<Order> {
     this.loadingService.show();
-    return this.http.get<Order>(this.apiUrl + '/api/client/orders/' + id).pipe(
+    return this.http.get<Order>(this.apiUrl + '/api/orders/' + id).pipe(
       finalize(() => this.loadingService.hide())
-    )
+    );
   }
 
   createOrder(order: Order): Observable<any> {
     this.loadingService.show();
-    return this.http.post(this.apiUrl + '/api/client/orders', order).pipe(
+    return this.http.post(this.apiUrl + '/api/orders', order).pipe(
       finalize(() => this.loadingService.hide())
-    )
+    );
+  }
+
+  // Ajout de la méthode de mise à jour d'une commande
+  updateOrder(id: number, order: Order): Observable<any> {
+    this.loadingService.show();
+    return this.http.put(this.apiUrl + `/api/orders/${id}`, order).pipe(
+      finalize(() => this.loadingService.hide())
+    );
+  }
+
+  patchOrder(id: number, partialOrder: Partial<Order>): Observable<any> {
+    this.loadingService.show();
+    return this.http.patch(this.apiUrl + `/api/orders/${id}`, partialOrder).pipe(
+      finalize(() => this.loadingService.hide())
+    );
+  }
+
+  // Ajout de la méthode de suppression d'une commande
+  deleteOrder(id: number): Observable<any> {
+    this.loadingService.show();
+    return this.http.delete(this.apiUrl + `/api/orders/${id}`).pipe(
+      finalize(() => this.loadingService.hide())
+    );
   }
 }

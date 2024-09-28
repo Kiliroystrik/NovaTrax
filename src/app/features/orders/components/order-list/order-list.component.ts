@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { OrderService } from '../../services/order.service';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { OrderFormComponent } from '../order-form/order-form.component';
+import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
-  imports: [DatePipe, RouterLink, OrderFormComponent],
+  imports: [DatePipe, RouterLink, OrderFormComponent, DeleteConfirmationModalComponent],
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss'],
 })
@@ -17,6 +18,7 @@ export class OrderListComponent implements OnInit {
   currentPage: number = 1;
   totalPages: number = 1;
   limit: number = 10;
+  orderToDelete: number | null = null;
 
   constructor(private orderService: OrderService) { }
 
@@ -34,25 +36,19 @@ export class OrderListComponent implements OnInit {
   }
 
   getPagesAroundCurrent(): number[] {
-    const range = 2; // Nombre de pages à afficher autour de la page actuelle
+    const range = 2;
     const pages: number[] = [];
 
-    // Si il n'y a qu'une seule page ou seulement 2 pages, pas besoin de pagination
     if (this.totalPages <= 1) {
       return pages;
     }
 
-    // Ajouter les pages autour de la page actuelle, sans inclure la première (1) ni la dernière page
     for (let i = Math.max(2, this.currentPage - range); i <= Math.min(this.totalPages - 1, this.currentPage + range); i++) {
       pages.push(i);
     }
 
     return pages;
   }
-
-
-
-
 
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
@@ -61,33 +57,53 @@ export class OrderListComponent implements OnInit {
     }
   }
 
-
   /***Partie Modal de création d'order ****/
-
-  // Ouvrir la modale de création d'une commande
   openModal() {
     const dialog: any = document.getElementById('orderCreationModal');
-
-    dialog?.showModal(); // Ouvre la modale
+    dialog?.showModal();
   }
 
-  // Fermer la modale
   closeModal() {
     const dialog: any = document.getElementById('orderCreationModal');
-    dialog?.close(); // Ferme la modale
+    dialog?.close();
   }
 
-  // Gérer la soumission du formulaire
   onOrderFormSubmit(orderData: any) {
     this.orderService.createOrder(orderData).subscribe({
       next: () => {
-        this.closeModal(); // Ferme la modale après soumission
+        this.closeModal();
         this.fetchOrders();
         console.log('Commande creée avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la création de la commande :', error);
       },
-    })
+    });
+  }
+
+  /***Partie Modal de suppression d'order ****/
+  // Ouvrir la modale de confirmation avec l'ID de la commande à supprimer
+  openDeleteModal(orderId: number) {
+    this.orderToDelete = orderId;
+    const deleteModal: any = document.getElementById('deleteConfirmationModal');
+    deleteModal?.showModal();
+  }
+
+  // Gérer la suppression confirmée
+  onConfirmDelete(orderId: number) {
+    this.orderService.deleteOrder(orderId).subscribe({
+      next: () => {
+        this.fetchOrders();
+        console.log('Commande supprimée avec succès !');
+      },
+      error: (error) => {
+        console.error('Erreur lors de la suppression de la commande :', error);
+      },
+    });
+  }
+
+  // Gérer l'annulation de la suppression
+  onCancelDelete() {
+    console.log('Suppression annulée');
   }
 }
