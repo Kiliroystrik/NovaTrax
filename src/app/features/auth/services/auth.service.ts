@@ -41,10 +41,15 @@ export class AuthService {
   }
 
   private setSession(accessToken: string, refreshToken: string): void {
-    sessionStorage.setItem('access_token', accessToken);
-    sessionStorage.setItem('refresh_token', refreshToken);
-    this.accessTokenSubject.next(accessToken);
+    if (accessToken && refreshToken) {
+      sessionStorage.setItem('access_token', accessToken);
+      sessionStorage.setItem('refresh_token', refreshToken);
+      this.accessTokenSubject.next(accessToken);
+    } else {
+      this.logout(); // Si les tokens sont invalides, on déconnecte
+    }
   }
+
 
   getAccessToken(): string | null {
     return sessionStorage.getItem('access_token');
@@ -60,15 +65,24 @@ export class AuthService {
       this.loadingService.show(); // Activer le loader
       return this.http.post(`${this.apiUrl}/api/token_refresh`, { refresh_token: refreshToken }).pipe(
         tap((response: any) => {
-          this.setSession(response.token, response.refresh_token);
+          if (response.token && response.refresh_token) {
+            this.setSession(response.token, response.refresh_token);
+          } else {
+            this.logout(); // Si la réponse est vide ou incorrecte
+          }
+        }),
+        catchError((error) => {
+          this.logout(); // Déconnecter si le refresh échoue
+          return throwError(() => error);
         }),
         finalize(() => this.loadingService.hide()) // Désactiver le loader à la fin de l'opération
       );
+    } else {
+      this.logout(); // Pas de token refresh trouvé
+      return throwError(() => new Error('No refresh token available'));
     }
-    return new Observable(observer => {
-      observer.error('No refresh token available');
-    });
   }
+
 
 
   isLoggedIn(): boolean {
