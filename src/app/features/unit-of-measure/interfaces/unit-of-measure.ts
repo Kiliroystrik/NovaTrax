@@ -3,4 +3,5 @@ export interface UnitOfMeasure {
     createdAt: string;
     updatedAt?: string | null;
     name: string;
+    symbol: string;
 }

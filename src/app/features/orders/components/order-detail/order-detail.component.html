@@ -141,7 +141,9 @@
                                 <tr>
                                     <td>{{ productDelivery.product.name }}</td>
                                     <td>{{ productDelivery.product.description }}</td>
-                                    <td>{{ productDelivery.quantity }} {{ productDelivery.product.unitOfMeasure.name }}
+                                    <td class="flex gap-2">{{ productDelivery.quantity }}
+                                        <span class="font-semibold">{{ productDelivery.product.unitOfMeasure.symbol
+                                            }}</span>
                                     </td>
                                 </tr>
                                 }

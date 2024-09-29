@@ -1,4 +1,4 @@
-import { UnitOfMeasure } from "./UnitOfMeasure";
+import { UnitOfMeasure } from "../../unit-of-measure/interfaces/unit-of-measure";
 
 export interface Product {
     id: number;
