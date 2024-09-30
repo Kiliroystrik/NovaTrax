@@ -6,7 +6,7 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angula
 import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { DatePipe } from '@angular/common';
 import { DriverService } from '../../services/driver.service';
-import { Driver } from '../../interfaces/driver';
+import { Driver } from '../../interfaces/Driver';
 import { UnitOfMeasureService } from '../../../unit-of-measure/services/unit-of-measure.service';
 
 @Component({

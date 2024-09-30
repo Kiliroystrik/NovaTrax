@@ -1,5 +1,5 @@
+import { Driver } from './../../interfaces/Driver';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Driver } from '../../interfaces/driver';
 import { DriverService } from '../../services/driver.service';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
