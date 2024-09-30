@@ -1,10 +1,11 @@
-import { Driver } from './../../interfaces/Driver';
+
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DriverService } from '../../services/driver.service';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { DriverFormComponent } from '../driver-form/driver-form.component';
+import { Driver } from '../../interfaces/driver';
 
 @Component({
   selector: 'app-driver-list',
