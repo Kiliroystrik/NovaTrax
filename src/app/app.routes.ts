@@ -11,6 +11,8 @@ import { OrderDetailComponent } from './features/orders/components/order-detail/
 import { ClientListComponent } from './features/client/components/client-list/client-list.component';
 import { ProductListComponent } from './features/product/components/product-list/product-list.component';
 import { ProductDetailComponent } from './features/product/components/product-detail/product-detail.component';
+import { DriverListComponent } from './features/driver/components/driver-list/driver-list.component';
+import { DriverDetailComponent } from './features/driver/components/driver-detail/driver-detail.component';
 
 export const routes: Routes = [
 
@@ -53,6 +55,8 @@ export const routes: Routes = [
             { path: 'clients/:id', component: ClientListComponent },
             { path: 'produits', component: ProductListComponent },
             { path: 'produits/:id', component: ProductDetailComponent },
+            { path: 'conducteurs', component: DriverListComponent },
+            { path: 'conducteurs/:id', component: DriverDetailComponent },
             // D'autres pages accessibles aux utilisateurs connectés
         ],
     },

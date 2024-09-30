@@ -1,0 +1,20 @@
+<form [formGroup]="driverForm" (ngSubmit)="Submit()">
+    <div class="mb-4">
+        <label for="firstName" class="block text-sm font-medium mr-2">Prénom</label>
+        <input type="text" id="firstName" formControlName="firstName" class="input input-bordered w-full mt-2">
+    </div>
+
+    <div class="mb-4">
+        <label for="lastName" class="block text-sm font-medium">Nom</label>
+        <input type="text" id="lastName" formControlName="lastName" class="input input-bordered w-full">
+    </div>
+
+    <div class="mb-4">
+        <label for="licenseNumber" class="block text-sm font-medium">Unité de mesure</label>
+        <input type="text" id="licenseNumber" formControlName="licenseNumber" class="input input-bordered w-full">
+    </div>
+
+    <div class="flex justify-end">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </div>
+</form>
