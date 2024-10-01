@@ -48,7 +48,7 @@
     </div>
 
     <!-- Modal pour la mise à jour -->
-    <dialog class="modal" id="updateOrderModal" [open]="isModalOpen">
+    <dialog class="modal modal-bottom sm:modal-middle" id="updateOrderModal" [open]="isModalOpen">
         <form [formGroup]="orderForm" (ngSubmit)="onSubmit()" class="modal-box">
             <h3 class="font-bold text-lg">Modifier la commande</h3>
 

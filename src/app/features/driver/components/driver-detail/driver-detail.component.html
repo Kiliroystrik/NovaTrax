@@ -28,7 +28,6 @@
             <!-- Détails du conducteur (hors formulaire) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <p><span class="font-semibold">Client :</span> {{ driver.firstName }}</p>
                     <p><span class="font-semibold">Date de création :</span> {{ driver.createdAt | date:'dd/MM/yyyy'
                         }}
                     </p>
@@ -39,34 +38,36 @@
                         date:'dd/MM/yyyy' }}
                     </p>
                     }
-                    <p><span class="font-semibold">Description :</span> {{driver.lastName}}</p>
+                    <p><span class="font-semibold">Prénom :</span> {{ driver.firstName }}</p>
+                    <p><span class="font-semibold">Nom :</span> {{ driver.lastName }}</p>
+                    <p><span class="font-semibold">Permis n° :</span> {{ driver.licenseNumber }}</p>
+
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal pour la mise à jour -->
-    <dialog class="modal" id="updateDriverModal" [open]="isModalOpen">
+    <dialog class="modal modal-bottom sm:modal-middle" id="updateDriverModal" [open]="isModalOpen">
         <form [formGroup]="driverForm" (ngSubmit)="onSubmit()" class="modal-box">
             <h3 class="font-bold text-lg">Modifier le conducteur</h3>
 
             <!-- Name -->
             <div class="mb-4">
-                <label for="firstName" class="block text-sm font-medium">Nom</label>
+                <label for="firstName" class="block text-sm font-medium">Prénom</label>
                 <input for="status" formControlName="firstName" class="input input-bordered w-full">
             </div>
 
-            <!-- Description -->
+            <!-- Last name -->
             <div class="mb-4">
-                <label for="lastName" class="block text-sm font-medium">Description</label>
-                <input type="text" id="lastName" formControlName="lastName" class="input input-bordered w-full">
+                <label for="lastName" class="block text-sm font-medium">Nom</label>
+                <input for="status" formControlName="lastName" class="input input-bordered w-full">
             </div>
 
-            <!-- Sélection de l'unité de mesure -->
+            <!-- License number -->
             <div class="mb-4">
-                <label for="licenseNumber" class="block text-sm font-medium">Unité de mesure</label>
-                <input type="text" id="licenseNumber" formControlName="licenseNumber"
-                    class="input input-bordered w-full">
+                <label for="licenseNumber" class="block text-sm font-medium">Permis n°</label>
+                <input for="status" formControlName="licenseNumber" class="input input-bordered w-full">
             </div>
 
             <div class="flex justify-end">
