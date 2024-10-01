@@ -1,28 +1,30 @@
-<!-- Bouton pour ouvrir la modale de création de conducteur -->
+<!-- Bouton pour ouvrir la modale de création de vehicule -->
 <div class="flex justify-between mb-4">
-    <h2 class="text-xl font-bold">Liste des conducteurs</h2>
-    <button class="btn btn-primary" (click)="openModal()">Nouveau conducteur</button>
+    <h2 class="text-xl font-bold">Liste des vehicules</h2>
+    <button class="btn btn-primary" (click)="openModal()">Nouveau vehicule</button>
 </div>
 
 <div class="overflow-x-auto">
     <table class="table w-full">
         <thead>
             <tr>
-                <th>Prénom</th>
-                <th>Nom</th>
-                <th>Numéro de permis</th>
+                <th>Plaque</th>
+                <th>Modele</th>
+                <th>Type</th>
+                <th>Capacité</th>
                 <th colspan="2"></th>
             </tr>
         </thead>
         <tbody>
-            @for (driver of drivers; track driver.id) {
+            @for (vehicle of vehicles; track vehicle.id) {
             <tr class="hover:bg-base-200">
-                <td>{{ driver.firstName }}</td>
-                <td>{{ driver.lastName }}</td>
-                <td>{{ driver.licenseNumber }}</td>
+                <td>{{ vehicle.licensePlate }}</td>
+                <td>{{ vehicle.model}}</td>
+                <td>{{ vehicle.type }}</td>
+                <td>{{ vehicle.capacity }}</td>
                 <td class="flex">
-                    <button class="btn btn-primary btn-xs" [routerLink]="['/conducteurs', driver.id]">Détails</button>
-                    <svg (click)="openDeleteModal(driver.id)" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    <button class="btn btn-primary btn-xs" [routerLink]="['/vehicules', vehicle.id]">Détails</button>
+                    <svg (click)="openDeleteModal(vehicle.id)" xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                         class="size-6 cursor-pointer text-error">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -81,19 +83,19 @@
     </div>
 </div>
 
-<!-- Modale pour la création d'une conducteur -->
-<dialog id="driverCreationModal" class="modal modal-bottom sm:modal-middle">
+<!-- Modale pour la création d'une vehicule -->
+<dialog id="vehicleCreationModal" class="modal modal-bottom sm:modal-middle">
     <div class="modal-box">
-        <h3 class="text-lg font-bold">Créer un nouveau conducteur</h3>
-        <app-driver-form (submitForm)="onDriverFormSubmit($event)"></app-driver-form>
+        <h3 class="text-lg font-bold">Créer un nouveau vehicule</h3>
+        <app-vehicle-form (submitForm)="onVehicleFormSubmit($event)"></app-vehicle-form>
         <div class="modal-action">
             <button class="btn btn-secondary" (click)="closeModal()">Annuler</button>
         </div>
     </div>
 </dialog>
 
-<!-- Modale de confirmation de la suppression d'une conducteur -->
+<!-- Modale de confirmation de la suppression d'une vehicule -->
 <!-- Modale de confirmation de suppression réutilisable -->
-<app-delete-confirmation-modal [itemId]="driverToDelete" message="Etes-vous sûr de vouloir supprimer cette conducteur ?"
+<app-delete-confirmation-modal [itemId]="vehicleToDelete" message="Etes-vous sûr de vouloir supprimer cette vehicule ?"
     (confirmDelete)="onConfirmDelete($event)" (cancel)="onCancelDelete()">
 </app-delete-confirmation-modal>

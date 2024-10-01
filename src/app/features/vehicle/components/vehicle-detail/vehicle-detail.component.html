@@ -1,11 +1,11 @@
-@if (product) {
+@if (vehicle) {
 <div class="container mx-auto p-4">
-    <!-- Informations de le produit -->
+    <!-- Informations de le vehicule -->
     <div class="card bg-base-100 shadow-xl mb-6">
         <div class="card-body">
             <div class="card-title flex justify-between content-center">
                 <h2 class="card-title text-3xl font-bold mb-4">
-                    {{ product.name }}
+                    Plaque {{ vehicle.licensePlate }}
                 </h2>
                 <div class="flex gap-2">
                     <!-- Icone d'édition -->
@@ -16,7 +16,7 @@
                     </svg>
 
                     <!-- Icone de suppression -->
-                    <svg (click)="openDeleteModal(product.id)" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    <svg (click)="openDeleteModal(vehicle.id)" xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                         class="size-6 cursor-pointer text-error">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -25,71 +25,72 @@
                 </div>
             </div>
 
-            <!-- Détails du produit (hors formulaire) -->
+            <!-- Détails du vehicule (hors formulaire) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <p><span class="font-semibold">Client :</span> {{ product.name }}</p>
-                    <p><span class="font-semibold">Date de création :</span> {{ product.createdAt | date:'dd/MM/yyyy'
+                    <p><span class="font-semibold">Date de création :</span> {{ vehicle.createdAt | date:'dd/MM/yyyy'
                         }}
                     </p>
-                    @if (product.updatedAt) {
+                    @if (vehicle.updatedAt) {
                     <p>
                         <span class="font-semibold">Mis à jour :</span> {{
-                        product.updatedAt |
+                        vehicle.updatedAt |
                         date:'dd/MM/yyyy' }}
                     </p>
                     }
-                    <p><span class="font-semibold">Description :</span> {{product.description}}</p>
+                    <p><span class="font-semibold">model :</span> {{vehicle.model}}</p>
+                    <p><span class="font-semibold">type</span> {{ vehicle.type }}</p>
+                    <p><span class="font-semibold">capacité :</span> {{vehicle.capacity}}</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal pour la mise à jour -->
-    <dialog class="modal modal-bottom sm:modal-middle" id="updateProductModal" [open]="isModalOpen">
-        <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="modal-box">
-            <h3 class="font-bold text-lg">Modifier le produit</h3>
+    <dialog class="modal modal-bottom sm:modal-middle" id="updateVehicleModal" [open]="isModalOpen">
+        <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()" class="modal-box">
+            <h3 class="font-bold text-lg">Modifier le vehicule</h3>
 
-            <!-- Name -->
+            <!-- licensePlate -->
             <div class="mb-4">
-                <label for="name" class="block text-sm font-medium">Nom</label>
-                <input for="status" formControlName="name" class="input input-bordered w-full">
+                <label for="licensePlate" class="block text-sm font-medium">Numéro de plaque</label>
+                <input for="licensePlate" formControlName="licensePlate" class="input input-bordered w-full">
             </div>
 
-            <!-- Description -->
+            <!-- model -->
             <div class="mb-4">
-                <label for="description" class="block text-sm font-medium">Description</label>
-                <input type="text" id="description" formControlName="description" class="input input-bordered w-full">
+                <label for="model" class="block text-sm font-medium">model</label>
+                <input type="text" for="model" id="model" formControlName="model" class="input input-bordered w-full">
             </div>
 
-            <!-- Sélection de l'unité de mesure -->
+            <!-- capacity -->
             <div class="mb-4">
-                <label for="unitOfMeasure" class="block text-sm font-medium">Unité de mesure</label>
-                <select id="unitOfMeasure" formControlName="unitOfMeasure" class="input input-bordered w-full">
-                    @for (unit of unitOfMeasureList; track unit.id) {
-                    <option [value]="unit.id">
-                        {{ unit.name }}
-                    </option>
-                    }
-                </select>
+                <label for="capacity" class="block text-sm font-medium">capacité</label>
+                <input type="number" id="capacity" formControlName="capacity" class="input input-bordered w-full">
+            </div>
+
+            <!-- type -->
+            <div class="mb-4">
+                <label for="type" class="block text-sm font-medium">type</label>
+                <input type="text" id="type" formControlName="type" class="input input-bordered w-full">
             </div>
 
             <div class="flex justify-end">
-                <button type="submit" class="btn btn-primary" [disabled]="productForm.invalid">Mettre à jour</button>
+                <button type="submit" class="btn btn-primary" [disabled]="vehicleForm.invalid">Mettre à jour</button>
                 <button type="button" class="btn btn-secondary ml-4" (click)="closeUpdateModal()">Annuler</button>
             </div>
         </form>
     </dialog>
 
 
-    <!-- Modale de confirmation de la suppression d'une produit -->
-    <app-delete-confirmation-modal [itemId]="productToDelete"
-        message="Etes-vous sûr de vouloir supprimer cette produit ?" (confirmDelete)="onConfirmDelete($event)"
+    <!-- Modale de confirmation de la suppression d'une vehicule -->
+    <app-delete-confirmation-modal [itemId]="vehicleToDelete"
+        message="Etes-vous sûr de vouloir supprimer cette vehicule ?" (confirmDelete)="onConfirmDelete($event)"
         (cancel)="onCancelDelete()">
     </app-delete-confirmation-modal>
 </div>
 } @else {
 <div class="alert alert-warning">
-    <span>Aucune produit disponible.</span>
+    <span>Aucune vehicule disponible.</span>
 </div>
 }
