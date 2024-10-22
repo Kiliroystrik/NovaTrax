@@ -2,12 +2,15 @@ import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ClientService } from '../../../client/services/client.service';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { DatePipe } from '@angular/common';
 import { DriverService } from '../../services/driver.service';
-
-import { UnitOfMeasureService } from '../../../unit-of-measure/services/unit-of-measure.service';
 import { Driver } from '../../interfaces/driver';
 
 @Component({
@@ -15,13 +18,12 @@ import { Driver } from '../../interfaces/driver';
   standalone: true,
   imports: [DeleteConfirmationModalComponent, ReactiveFormsModule, DatePipe],
   templateUrl: './driver-detail.component.html',
-  styleUrl: './driver-detail.component.scss'
+  styleUrl: './driver-detail.component.scss',
 })
 export class DriverDetailComponent {
   // ----- Services et dépendances -----
   private route = inject(ActivatedRoute);
   private driverService = inject(DriverService);
-  private unitOfMeasureService = inject(UnitOfMeasureService);
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
 
@@ -29,7 +31,6 @@ export class DriverDetailComponent {
   private driverSubscription: Subscription | undefined;
 
   // ----- Données -----
-  public unitOfMeasureList: any[] = [];
   driverId: number | undefined;
   driverToDelete: number | null = null;
   public driver: Driver | undefined;
@@ -39,14 +40,13 @@ export class DriverDetailComponent {
   public driverForm = this.formBuilder.group({
     firstName: ['', [Validators.required]],
     lastName: [''],
-    licenseNumber: ['', [Validators.required]]  // Sélecteur client obligatoire
+    licenseNumber: ['', [Validators.required]], // Sélecteur client obligatoire
   });
 
   // ----- Cycle de vie -----
   ngOnInit(): void {
     this.driverId = this.route.snapshot.params['id'];
     this.getDriver();
-    this.getUnitOfMeasureList();  // Récupérer les clients pour le sélecteur
   }
 
   ngOnDestroy(): void {
@@ -61,28 +61,20 @@ export class DriverDetailComponent {
   getDriver() {
     if (!this.driverId) return;
 
-    this.driverSubscription = this.driverService.getDriver(this.driverId).subscribe({
-      next: (driver) => {
-        this.driver = driver;
+    this.driverSubscription = this.driverService
+      .getDriver(this.driverId)
+      .subscribe({
+        next: (driver) => {
+          this.driver = driver;
 
-        this.driverForm.patchValue({
-          firstName: driver.firstName,
-          lastName: driver.lastName,
-          licenseNumber: driver.licenseNumber  // Utiliser l'ID du client
-        });
-      },
-      error: (err) => console.error(err),
-    });
-  }
-
-  /** Récupération de la liste des clients */
-  getUnitOfMeasureList() {
-    this.unitOfMeasureService.getUnitOfMeasures().subscribe({
-      next: (data) => {
-        this.unitOfMeasureList = data.items;  // Charger la liste des clients
-      },
-      error: (err) => console.error(err),
-    });
+          this.driverForm.patchValue({
+            firstName: driver.firstName,
+            lastName: driver.lastName,
+            licenseNumber: driver.licenseNumber, // Utiliser l'ID du client
+          });
+        },
+        error: (err) => console.error(err),
+      });
   }
 
   /** Mise à jour de la commande */
@@ -94,12 +86,12 @@ export class DriverDetailComponent {
     this.driverService.patchDriver(this.driverId, driverUpdateData).subscribe({
       next: () => {
         console.log('Commande mise à jour avec succès !');
-        this.getDriver();  // Rafraîchir la commande
-        this.closeUpdateModal();  // Fermer la modale après la mise à jour
+        this.getDriver(); // Rafraîchir la commande
+        this.closeUpdateModal(); // Fermer la modale après la mise à jour
       },
       error: (err) => {
         console.error('Erreur lors de la mise à jour de la commande :', err);
-      }
+      },
     });
   }
 
@@ -107,12 +99,12 @@ export class DriverDetailComponent {
 
   /** Ouvrir la modale de mise à jour */
   openUpdateModal() {
-    this.isModalOpen = true;  // Ouvre la modale de mise à jour
+    this.isModalOpen = true; // Ouvre la modale de mise à jour
   }
 
   /** Fermer la modale de mise à jour */
   closeUpdateModal() {
-    this.isModalOpen = false;  // Ferme la modale
+    this.isModalOpen = false; // Ferme la modale
   }
 
   // ----- Gestion de la suppression -----
@@ -128,10 +120,11 @@ export class DriverDetailComponent {
   onConfirmDelete(driverId: number) {
     this.driverService.deleteDriver(driverId).subscribe({
       next: () => {
-        this.router.navigate(['/conducteurs']);  // Redirection après suppression
+        this.router.navigate(['/conducteurs']); // Redirection après suppression
         console.log('Commande supprimée avec succès !');
       },
-      error: (error) => console.error('Erreur lors de la suppression de la commande :', error),
+      error: (error) =>
+        console.error('Erreur lors de la suppression de la commande :', error),
     });
   }
 
@@ -139,5 +132,4 @@ export class DriverDetailComponent {
   onCancelDelete() {
     console.log('Suppression annulée');
   }
-
 }

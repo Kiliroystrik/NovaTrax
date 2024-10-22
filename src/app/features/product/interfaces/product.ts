@@ -1,10 +1,11 @@
-import { UnitOfMeasure } from "../../unit-of-measure/interfaces/unit-of-measure";
-
 export interface Product {
-    id: number;
-    createdAt: string;
-    updatedAt?: string | null;
-    name: string;
-    description: string;
-    unitOfMeasure: UnitOfMeasure;
+  id: number;
+  name: string;
+  description: string;
+  weightKg: number;
+  isHazardous: boolean;
+  hazardClass?: string;
+  adrCompliant: boolean;
+  // Ajout du champ discriminant
+  type: 'liquid' | 'solid';
 }

@@ -1,0 +1,71 @@
+<div
+  class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
+>
+  <input type="checkbox" />
+  <div class="collapse-title text-xl font-medium">
+    Livraison #{{ delivery.id }} - {{ delivery.geocodedAddress.city }} -
+    {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy" }}
+    <span
+      class="badge"
+      [ngClass]="delivery.status.name | statusColor : delivery.status.type"
+    >
+      {{ delivery.status.name | statusLabel }}
+    </span>
+  </div>
+  <div class="collapse-content">
+    <!-- Détails de la Livraison -->
+    <p>
+      <span class="font-semibold">Date de livraison attendue :</span>
+      {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy" }}
+    </p>
+    <p>
+      <span class="font-semibold">Date de livraison réelle :</span>
+      {{
+        delivery.actualDeliveryDate
+          ? (delivery.actualDeliveryDate | date : "dd/MM/yyyy")
+          : "Non livrée"
+      }}
+    </p>
+    <p>
+      <span class="font-semibold">Adresse de livraison :</span>
+      {{ delivery.geocodedAddress.fullAddress }}
+    </p>
+
+    <!-- Tableau des Produits Livrés -->
+    <div class="overflow-x-auto mt-4">
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Description</th>
+            <th>Poids</th>
+            <th>Quantité</th>
+            <th>Densité (si liquide)</th>
+            <th>Dimensions (si solide)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (productDelivery of delivery.productDeliveries; track
+          productDelivery.id) {
+          <tr>
+            <td>{{ productDelivery.product.name }}</td>
+            <td>{{ productDelivery.product.description }}</td>
+            <td>{{ productDelivery.product.weightKg }} kg</td>
+            <td>{{ productDelivery.quantity }}</td>
+            <td>
+              @if (isLiquidProduct(productDelivery.product)) {
+              {{ productDelivery.product.densityKgPerLiter }} kg/L }
+            </td>
+            <td>
+              @if (isSolidProduct(productDelivery.product)) {
+              {{ productDelivery.product.lengthCm }} x
+              {{ productDelivery.product.widthCm }} x
+              {{ productDelivery.product.heightCm }} cm }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

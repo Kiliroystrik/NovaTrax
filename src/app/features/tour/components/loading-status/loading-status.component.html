@@ -1,0 +1,53 @@
+<!-- Poids -->
+<div class="mb-2">
+  <label class="block text-sm font-medium mb-1">Poids :</label>
+  <progress
+    class="progress w-full"
+    [ngClass]="{
+      'progress-primary': weightPercentage <= 100,
+      'progress-error': weightPercentage > 100
+    }"
+    [value]="weightPercentage > 100 ? 100 : weightPercentage"
+    max="100"
+  ></progress>
+  <div
+    class="text-sm mt-1"
+    [ngClass]="{
+      'text-red-600': weightPercentage > 100,
+      'text-gray-700': weightPercentage <= 100
+    }"
+  >
+    Poids : {{ weightPercentage | number : "1.0-2" }}%
+  </div>
+  <div class="text-sm mt-1">
+    Ratio : {{ totalWeight | number : "1.0-2" }} kg /
+    {{ vehicleWeight | number : "1.0-2" }} kg
+  </div>
+</div>
+
+<!-- Volume -->
+<div>
+  <label class="block text-sm font-medium mb-1">Volume :</label>
+  <progress
+    class="progress w-full"
+    [ngClass]="{
+      'progress-success': volumePercentage <= 100,
+      'progress-error': volumePercentage > 100
+    }"
+    [value]="volumePercentage > 100 ? 100 : volumePercentage"
+    max="100"
+  ></progress>
+  <div
+    class="text-sm mt-1"
+    [ngClass]="{
+      'text-red-600': volumePercentage > 100,
+      'text-gray-700': volumePercentage <= 100
+    }"
+  >
+    Volume : {{ volumePercentage | number : "1.0-2" }}%
+  </div>
+  <div class="text-sm mt-1">
+    Ratio : {{ totalVolume | number : "1.0-2" }} L /
+    {{ vehicleVolume | number : "1.0-2" }} L
+  </div>
+</div>

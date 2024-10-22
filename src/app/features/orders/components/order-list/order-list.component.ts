@@ -4,11 +4,20 @@ import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { OrderFormComponent } from '../order-form/order-form.component';
 import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
+import { StatusColorPipe } from '../../../../shared/pipes/status-colors/status-color.pipe';
+import { StatusLabelPipe } from '../../../../shared/pipes/status-colors/status-label.pipe';
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
-  imports: [DatePipe, RouterLink, OrderFormComponent, DeleteConfirmationModalComponent],
+  imports: [
+    DatePipe,
+    RouterLink,
+    OrderFormComponent,
+    DeleteConfirmationModalComponent,
+    StatusColorPipe,
+    StatusLabelPipe,
+  ],
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss'],
 })
@@ -20,19 +29,21 @@ export class OrderListComponent implements OnInit {
   limit: number = 10;
   orderToDelete: number | null = null;
 
-  constructor(private orderService: OrderService) { }
+  constructor(private orderService: OrderService) {}
 
   ngOnInit() {
     this.fetchOrders();
   }
 
   fetchOrders() {
-    this.orderService.getOrders(this.currentPage, this.limit).subscribe((response) => {
-      this.orders = response.items;
-      this.totalItems = response.totalItems;
-      this.currentPage = response.currentPage;
-      this.totalPages = response.totalPages;
-    });
+    this.orderService
+      .getOrders(this.currentPage, this.limit)
+      .subscribe((response) => {
+        this.orders = response.items;
+        this.totalItems = response.totalItems;
+        this.currentPage = response.currentPage;
+        this.totalPages = response.totalPages;
+      });
   }
 
   getPagesAroundCurrent(): number[] {
@@ -43,7 +54,11 @@ export class OrderListComponent implements OnInit {
       return pages;
     }
 
-    for (let i = Math.max(2, this.currentPage - range); i <= Math.min(this.totalPages - 1, this.currentPage + range); i++) {
+    for (
+      let i = Math.max(2, this.currentPage - range);
+      i <= Math.min(this.totalPages - 1, this.currentPage + range);
+      i++
+    ) {
       pages.push(i);
     }
 

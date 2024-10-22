@@ -1,0 +1,11 @@
+<div class="card bg-base-100 shadow-xl">
+  <div class="card-body">
+    <h2 class="card-title">Ajouter une livraison</h2>
+    <button class="btn btn-primary" (click)="onAdd()">Ajouter</button>
+    @if (showForm) {
+    <app-add-delivery-form
+      (deliveryAdded)="onFormAdded()"
+    ></app-add-delivery-form>
+    }
+  </div>
+</div>

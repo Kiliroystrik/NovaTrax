@@ -1,7 +1,9 @@
-import { Product } from "../../product/interfaces/product";
+import { Product } from '../../product/interfaces/product';
 
 export interface ProductDelivery {
-    id: number;
-    product: Product;
-    quantity: string;
+  id: number;
+  product: Product;
+  quantity: string;
+  weight: string;
+  volume: string;
 }

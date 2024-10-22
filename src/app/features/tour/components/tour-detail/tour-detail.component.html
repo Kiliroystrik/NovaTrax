@@ -1,0 +1,366 @@
+<!-- tour-detail.component.html -->
+
+@if (tour) {
+<div class="container mx-auto p-4">
+  <!-- Carte des Informations de la Tournée, Conducteur et Entrepôt -->
+  <div class="card bg-base-100 shadow-xl mb-6">
+    <div class="card-body">
+      <!-- Titre de la Carte avec Statut de la Tournée -->
+      <div>
+        <h2 class="card-title">{{ tour.tourNumber }}</h2>
+      </div>
+      <div class="flex justify-between items-center mb-4">
+        <!-- Statut de la Tournée -->
+        <span
+          class="badge"
+          [ngClass]="tour.status.name | statusColor : tour.status.type"
+        >
+          {{ tour.status.name | statusLabel }}
+        </span>
+        <div class="flex space-x-2">
+          <!-- Icône de Suppression -->
+          <svg
+            (click)="openDeleteModal(tour.id)"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6 cursor-pointer text-red-500 hover:text-red-700"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Formulaire de Mise à Jour Intégré -->
+      <form
+        [formGroup]="tourForm"
+        (ngSubmit)="onSubmit()"
+        class="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <!-- Informations de la Tournée -->
+        <div>
+          <label for="startDate" class="block text-sm font-medium"
+            >Commence le :</label
+          >
+          <input
+            id="startDate"
+            type="datetime-local"
+            formControlName="startDate"
+            class="input input-bordered w-full"
+          />
+          @if (tourForm.get('startDate')?.invalid &&
+          (tourForm.get('startDate')?.dirty ||
+          tourForm.get('startDate')?.touched)) {
+          <div class="text-red-500 text-sm">La date de début est requise.</div>
+          }
+        </div>
+
+        <div>
+          <label for="endDate" class="block text-sm font-medium"
+            >Fini le :</label
+          >
+          <input
+            id="endDate"
+            type="datetime-local"
+            formControlName="endDate"
+            class="input input-bordered w-full"
+          />
+          @if (tourForm.get('endDate')?.invalid &&
+          (tourForm.get('endDate')?.dirty || tourForm.get('endDate')?.touched))
+          {
+          <div class="text-red-500 text-sm">La date de fin est requise.</div>
+          }
+        </div>
+
+        <!-- Statut -->
+        <div>
+          <label for="status" class="block text-sm font-medium">Statut :</label>
+          <select
+            id="status"
+            formControlName="status"
+            class="select select-bordered w-full"
+          >
+            @for(status of statuses; track status.id) {
+            <option [value]="status.id">{{ status.name | statusLabel }}</option>
+            }
+          </select>
+          @if (tourForm.get('status')?.invalid && (tourForm.get('status')?.dirty
+          || tourForm.get('status')?.touched)) {
+          <div class="text-red-500 text-sm">Le statut est requis.</div>
+          }
+        </div>
+
+        <!-- Informations du Conducteur -->
+        <div>
+          <label for="driver" class="block text-sm font-medium"
+            >Conducteur :</label
+          >
+          <select
+            id="driver"
+            formControlName="driver"
+            class="select select-bordered w-full"
+          >
+            <option>Sélectionnez un conducteur</option>
+            @for (driver of drivers; track driver.id) {
+            <option [value]="driver.id">
+              {{ driver.firstName + " " + driver.lastName }}
+            </option>
+            }
+          </select>
+          @if (tourForm.get('driver')?.invalid && (tourForm.get('driver')?.dirty
+          || tourForm.get('driver')?.touched)) {
+          <div class="text-red-500 text-sm">Le conducteur est requis.</div>
+          }
+        </div>
+
+        <!-- Informations du Véhicule -->
+        <div>
+          <label for="vehicle" class="block text-sm font-medium"
+            >Véhicule :</label
+          >
+          <select
+            id="vehicle"
+            formControlName="vehicle"
+            class="select select-bordered w-full"
+          >
+            <option>Sélectionnez un véhicule</option>
+            @for (vehicle of vehicles; track vehicle.id) {
+            <option [value]="vehicle.id">{{ vehicle.licensePlate }}</option>
+            }
+          </select>
+          @if (tourForm.get('vehicle')?.invalid &&
+          (tourForm.get('vehicle')?.dirty || tourForm.get('vehicle')?.touched))
+          {
+          <div class="text-red-500 text-sm">Le véhicule est requis.</div>
+          }
+        </div>
+
+        <!-- Entrepôt de chargement -->
+        <div>
+          <label for="loading" class="block text-sm font-medium"
+            >Entrepôt de Chargement :</label
+          >
+          <select
+            id="loading"
+            formControlName="loading"
+            class="select select-bordered w-full"
+          >
+            <option>Sélectionnez un entrepôt</option>
+            @for (warehouse of warehouses; track warehouse.id) {
+            <option [value]="warehouse.id">
+              {{ warehouse.name }} - {{ warehouse.address.city }}
+            </option>
+            }
+          </select>
+          @if (tourForm.get('loading')?.invalid &&
+          (tourForm.get('loading')?.dirty || tourForm.get('loading')?.touched))
+          {
+          <div class="text-red-500 text-sm">
+            La warehouse de chargement est requise.
+          </div>
+          }
+        </div>
+
+        <!-- Barre de Pourcentage de Chargement -->
+        <!-- Poids -->
+        <div class="mb-2">
+          <label class="block text-sm font-medium mb-1">Poids :</label>
+          <progress
+            class="progress w-full"
+            [ngClass]="{
+              'progress-primary': weightPercentage <= 100,
+              'progress-error': weightPercentage > 100
+            }"
+            [value]="weightPercentage > 100 ? 100 : weightPercentage"
+            max="100"
+          ></progress>
+          <div
+            class="text-sm mt-1"
+            [ngClass]="{
+              'text-red-600': weightPercentage > 100,
+              'text-gray-700': weightPercentage <= 100
+            }"
+          >
+            Poids : {{ weightPercentage | number : "1.0-2" }}%
+          </div>
+          <div class="text-sm mt-1">
+            <!-- ratio = totalWeight / tour.vehicle.weight -->
+            Ratio : {{ totalWeight | number : "1.0-2" }} kg /
+            {{ tour.vehicle!.weight | number : "1.0-2" }} kg
+          </div>
+        </div>
+
+        <!-- Volume -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Volume :</label>
+          <progress
+            class="progress w-full"
+            [ngClass]="{
+              'progress-success': volumePercentage <= 100,
+              'progress-error': volumePercentage > 100
+            }"
+            [value]="volumePercentage > 100 ? 100 : volumePercentage"
+            max="100"
+          ></progress>
+          <div
+            class="text-sm mt-1"
+            [ngClass]="{
+              'text-red-600': volumePercentage > 100,
+              'text-gray-700': volumePercentage <= 100
+            }"
+          >
+            Volume : {{ volumePercentage | number : "1.0-2" }}%
+          </div>
+          <div class="text-sm mt-1">
+            <!-- ratio = totalVolume / tour.vehicle.volume -->
+            Ratio : {{ totalVolume | number : "1.0-2" }} L /
+            {{ tour.vehicle!.volume | number : "1.0-2" }} L
+          </div>
+        </div>
+
+        @if (isEditing) {
+        <!-- Boutons de Soumission -->
+        <div class="md:col-span-3 flex justify-end space-x-4">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="tourForm.invalid || isSubmitting"
+          >
+            {{ isSubmitting ? "Mise à jour..." : "Mettre à jour" }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="onCancelUpdate()"
+          >
+            Annuler
+          </button>
+        </div>
+        }
+      </form>
+    </div>
+  </div>
+
+  <!-- Section des Livraisons -->
+  <div class="card bg-base-100 shadow-xl mb-6">
+    <div class="card-body">
+      <div class="mb-6">
+        <h3 class="text-2xl font-bold mb-4">Livraisons</h3>
+        <div class="space-y-4">
+          @if (tour.deliveries.length === 0) {
+          <p>Aucune livraison n'a été trouvée</p>
+          } @else { @for (delivery of tour.deliveries; track delivery.id) {
+          <div
+            class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
+          >
+            <input type="checkbox" />
+            <div class="collapse-title text-xl font-medium">
+              Livraison #{{ delivery.id }} -
+              {{ delivery.geocodedAddress.city }} -
+              {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy" }}
+              <span
+                class="badge"
+                [ngClass]="
+                  delivery.status.name | statusColor : delivery.status.type
+                "
+              >
+                {{ delivery.status.name | statusLabel }}
+              </span>
+            </div>
+            <div class="collapse-content">
+              <!-- Détails de la Livraison -->
+              <p>
+                <span class="font-semibold">Date de livraison attendue :</span>
+                {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy" }}
+              </p>
+              <p>
+                <span class="font-semibold">Date de livraison réelle :</span>
+                {{
+                  delivery.actualDeliveryDate
+                    ? (delivery.actualDeliveryDate | date : "dd/MM/yyyy")
+                    : "Non livrée"
+                }}
+              </p>
+              <p>
+                <span class="font-semibold">Adresse de livraison :</span>
+                {{ delivery.geocodedAddress.fullAddress }}
+              </p>
+
+              <!-- Tableau des Produits Livrés -->
+              <div class="overflow-x-auto mt-4">
+                <table class="table w-full">
+                  <thead>
+                    <tr>
+                      <th>Produit</th>
+                      <th>Description</th>
+                      <th>Poids</th>
+                      <th>Quantité</th>
+                      <th>Densité (si liquide)</th>
+                      <th>Dimensions (si solide)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (productDelivery of delivery.productDeliveries; track
+                    productDelivery.id) {
+                    <tr>
+                      <td>{{ productDelivery.product.name }}</td>
+                      <td>{{ productDelivery.product.description }}</td>
+                      <td>{{ productDelivery.product.weightKg }} kg</td>
+                      <td>{{ productDelivery.quantity }}</td>
+
+                      @if (isLiquidProduct(productDelivery.product)) {
+                      <td>
+                        {{ productDelivery.product.densityKgPerLiter }} kg/L
+                      </td>
+                      <td>-</td>
+                      } @else if (isSolidProduct(productDelivery.product)) {
+                      <td>-</td>
+                      <td>
+                        {{ productDelivery.product.lengthCm }} x
+                        {{ productDelivery.product.widthCm }} x
+                        {{ productDelivery.product.heightCm }} cm
+                      </td>
+                      } @else {
+                      <td>-</td>
+                      <td>-</td>
+                      }
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          } }
+          <!-- Ajout de Livraison -->
+          <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+              <h2 class="card-title">Ajouter une livraison</h2>
+              <button class="btn btn-primary">Ajouter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmation de Suppression -->
+  <app-delete-confirmation-modal
+    [itemId]="tourToDelete"
+    message="Êtes-vous sûr de vouloir supprimer cette tournée ?"
+    (confirmDelete)="onConfirmDelete($event)"
+    (cancel)="onCancelDelete()"
+  >
+  </app-delete-confirmation-modal>
+</div>
+} @else {
+<div class="alert alert-warning">
+  <span>Aucune tournée disponible.</span>
+</div>
+}

@@ -9,21 +9,26 @@ import { LoadingComponent } from './shared/components/loading/loading.component'
   standalone: true,
   imports: [RouterOutlet, LoadingComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   isLoggedIn: boolean = false;
   isLoading: boolean = false;
 
-  constructor(private authService: AuthService, private loadingService: LoadingService) { }
+  constructor(
+    private authService: AuthService,
+    private loadingService: LoadingService
+  ) {}
 
   ngOnInit() {
     // Simple vérification de l'état de connexion, mais pas de redirection ici
     this.isLoggedIn = this.authService.isLoggedIn();
-    console.log(this.isLoggedIn ? 'Utilisateur connecté' : 'Utilisateur non connecté');
+    console.log(
+      this.isLoggedIn ? 'Utilisateur connecté' : 'Utilisateur non connecté'
+    );
 
     // S'abonner au service pour surveiller l'état de chargement
-    this.loadingService.loading$.subscribe(isLoading => {
+    this.loadingService.loading$.subscribe((isLoading) => {
       this.isLoading = isLoading;
     });
   }

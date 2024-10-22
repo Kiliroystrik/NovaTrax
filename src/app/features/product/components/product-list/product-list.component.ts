@@ -5,13 +5,21 @@ import { Router, RouterLink } from '@angular/router';
 import { DeleteConfirmationModalComponent } from '../../../../shared/components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { Product } from '../../interfaces/product';
 import { ProductFormComponent } from '../product-form/product-form.component';
+import { LiquidProduct } from '../../interfaces/LiquidProduct';
+import { SolidProduct } from '../../interfaces/SolidProduct';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [DatePipe, RouterLink, DeleteConfirmationModalComponent, SlicePipe, ProductFormComponent],
+  imports: [
+    DatePipe,
+    RouterLink,
+    DeleteConfirmationModalComponent,
+    SlicePipe,
+    ProductFormComponent,
+  ],
   templateUrl: './product-list.component.html',
-  styleUrl: './product-list.component.scss'
+  styleUrl: './product-list.component.scss',
 })
 export class ProductListComponent {
   products: Product[] = [];
@@ -21,19 +29,21 @@ export class ProductListComponent {
   limit: number = 10;
   productToDelete: number | null = null;
 
-  constructor(private productService: ProductService) { }
+  constructor(private productService: ProductService) {}
 
   ngOnInit() {
     this.fetchProducts();
   }
 
   fetchProducts() {
-    this.productService.getProducts(this.currentPage, this.limit).subscribe((response) => {
-      this.products = response.items;
-      this.totalItems = response.totalItems;
-      this.currentPage = response.currentPage;
-      this.totalPages = response.totalPages;
-    });
+    this.productService
+      .getProducts(this.currentPage, this.limit)
+      .subscribe((response) => {
+        this.products = response.items;
+        this.totalItems = response.totalItems;
+        this.currentPage = response.currentPage;
+        this.totalPages = response.totalPages;
+      });
   }
 
   getPagesAroundCurrent(): number[] {
@@ -44,7 +54,11 @@ export class ProductListComponent {
       return pages;
     }
 
-    for (let i = Math.max(2, this.currentPage - range); i <= Math.min(this.totalPages - 1, this.currentPage + range); i++) {
+    for (
+      let i = Math.max(2, this.currentPage - range);
+      i <= Math.min(this.totalPages - 1, this.currentPage + range);
+      i++
+    ) {
       pages.push(i);
     }
 
@@ -106,5 +120,13 @@ export class ProductListComponent {
   // Gérer l'annulation de la suppression
   onCancelDelete() {
     console.log('Suppression annulée');
+  }
+
+  isLiquidProduct(product: Product): product is LiquidProduct {
+    return (product as LiquidProduct).densityKgPerLiter !== undefined;
+  }
+
+  isSolidProduct(product: Product): product is SolidProduct {
+    return (product as SolidProduct).lengthCm !== undefined;
   }
 }

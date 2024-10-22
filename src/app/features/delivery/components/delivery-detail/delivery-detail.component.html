@@ -1,0 +1,35 @@
+@if (delivery) {
+
+<div class="delivery-detail">
+  <h2>Livraison #{{ delivery.id }}</h2>
+
+  <p>
+    <strong>Date Attendue :</strong>
+    {{ delivery.expectedDeliveryDate | date : "short" }}
+  </p>
+  <p>
+    <strong>Date Réelle :</strong>
+    {{ delivery.actualDeliveryDate | date : "short" }}
+  </p>
+  <p><strong>Tournée :</strong> {{ delivery.tour.tourNumber }}</p>
+  <!-- <p><strong>Compagnie :</strong> {{ delivery.company.name }}</p> -->
+  <p><strong>Commande Client :</strong> {{ delivery.order.orderNumber }}</p>
+  <p><strong>Adresse :</strong> {{ delivery.geocodedAddress.fullAddress }}</p>
+  <p><strong>Statut :</strong> {{ delivery.status.name }}</p>
+
+  <h3>Produits Livrés</h3>
+  <ul>
+    @for(product of delivery.productDeliveries; track product.id) {
+    <li>
+      {{ product.product.name }} - Quantité : {{ product.quantity }}
+      <!-- {{ product.temperature ? ", Température : " + product.temperature + "°C" : "" }} -->
+    </li>
+    }
+  </ul>
+
+  <button [routerLink]="['/deliveries', delivery.id, 'edit']">Modifier</button>
+  <button [routerLink]="['/deliveries']">Retour à la Liste</button>
+</div>
+}@else {
+<p>Aucune livraison n'a été trouvée</p>
+}

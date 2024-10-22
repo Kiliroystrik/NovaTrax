@@ -1,0 +1,378 @@
+<!-- src/app/features/delivery/components/delivery-list/delivery-list.component.html -->
+
+<div class="delivery-list p-6 min-h-screen">
+  <h1 class="text-3xl font-bold mb-6 text-center lg:text-left">
+    Gestion des Livraisons
+  </h1>
+
+  <!-- Tableau des Livraisons pour les Grands Écrans -->
+  <div
+    class="mb-2 flex flex-row flex-wrap items-center lg:flex-row items-start lg:items-center sm:flex-row"
+  >
+    <!-- Dropdown pour Filtrer par Type de Produit -->
+    <div class="dropdown dropdown-bottom">
+      <div tabindex="0" role="button" class="btn m-1 btn-sm">
+        Filtrer par type de produit
+      </div>
+      <ul
+        tabindex="0"
+        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow flex flex-col gap-1"
+      >
+        <li>
+          <!-- Bouton de Tri par Code Postal -->
+          <button class="btn m-1 btn-sm" (click)="sortByPostalCode()">
+            Trier par Code Postal
+          </button>
+        </li>
+        <li>
+          <!-- Bouton de Tri par date de livraison -->
+          <button class="btn m-1 btn-sm" (click)="sortByDeliveryDate()">
+            Trier par Date de Livraison
+          </button>
+        </li>
+      </ul>
+    </div>
+    <!-- Dropdown pour Filtrer par Type de Produit -->
+    <div class="dropdown dropdown-bottom">
+      <div tabindex="0" role="button" class="btn m-1 btn-sm">
+        Filtrer par type de produit
+      </div>
+      <ul
+        tabindex="0"
+        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow flex flex-col gap-1"
+      >
+        <li *ngFor="let productType of productTypes; let i = index">
+          <label class="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              #cb
+              [checked]="selectedProductTypes.includes(productType)"
+              (change)="filterByProductType(productType, cb.checked)"
+              class="form-checkbox h-4 w-4 text-indigo-600"
+            />
+
+            <span>{{ productType }}</span>
+          </label>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Boutons d'Action lorsque des Livraisons sont Sélectionnées -->
+    <div
+      *ngIf="selectedDeliveries.length > 0"
+      class="flex gap-1 m-1 flex-wrap lg:mt-0"
+    >
+      <button class="btn btn-sm btn-primary" (click)="assignToTourMethod()">
+        Assigner à une tournée
+      </button>
+      <button class="btn btn-sm btn-secondary">Créer une tournée</button>
+    </div>
+  </div>
+
+  <!-- Tableau pour les Grands Écrans -->
+  <div class="hidden lg:block overflow-x-auto shadow-md rounded-lg">
+    <table class="min-w-full divide-y">
+      <thead>
+        <tr>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+          >
+            <div class="flex items-center space-x-2 min-w-20">
+              <input
+                type="checkbox"
+                [checked]="isAllSelected()"
+                (change)="toggleSelectAll()"
+                aria-label="Sélectionner toutes les livraisons"
+                class="form-checkbox h-4 w-4 text-indigo-600"
+              />
+              <div>
+                <span>
+                  {{ selectedDeliveries.length }} /
+                  {{ filteredDeliveries.length }}
+                </span>
+              </div>
+            </div>
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+          >
+            Date Prévue
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+          >
+            Adresse
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+          >
+            Produit
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+          >
+            Type
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+          >
+            Quantité
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+          >
+            Statut
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        <tr *ngFor="let delivery of paginatedDeliveries">
+          <!-- Case à Cocher pour Sélectionner la Livraison -->
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <input
+              type="checkbox"
+              [checked]="isSelected(delivery.id)"
+              (change)="toggleSelection(delivery.id)"
+            />
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm" }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            {{ delivery.geocodedAddress.postalCode }}<br />
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <ng-container
+              *ngIf="
+                delivery.productDeliveries &&
+                  delivery.productDeliveries.length > 0;
+                else noProducts
+              "
+            >
+              <ul>
+                <li *ngFor="let productDelivery of delivery.productDeliveries">
+                  {{ productDelivery.product.name }}
+                </li>
+              </ul>
+            </ng-container>
+            <ng-template #noProducts>N/A</ng-template>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <ng-container
+              *ngIf="
+                delivery.productDeliveries &&
+                  delivery.productDeliveries.length > 0;
+                else noTypes
+              "
+            >
+              <ul>
+                <li *ngFor="let productDelivery of delivery.productDeliveries">
+                  {{ productDelivery.product.type }}
+                </li>
+              </ul>
+            </ng-container>
+            <ng-template #noTypes>N/A</ng-template>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <ng-container
+              *ngIf="
+                delivery.productDeliveries &&
+                  delivery.productDeliveries.length > 0;
+                else noQuantities
+              "
+            >
+              <ul>
+                <li *ngFor="let productDelivery of delivery.productDeliveries">
+                  {{ productDelivery.quantity }}
+                </li>
+              </ul>
+            </ng-container>
+            <ng-template #noQuantities>N/A</ng-template>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <span
+              class="badge"
+              [ngClass]="{
+                'badge-success': delivery.status.name === 'Livrée',
+                'badge-warning': delivery.status.name === 'En Cours',
+                'badge-error': delivery.status.name === 'Annulée'
+              }"
+            >
+              {{ delivery.status.name }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <div class="flex gap-1">
+              <button
+                [routerLink]="['/livraisons', delivery.id]"
+                class="btn btn-sm btn-primary flex items-center space-x-2"
+              >
+                <span>Voir</span>
+              </button>
+              <button
+                [routerLink]="['/livraisons', delivery.id, 'edit']"
+                class="btn btn-sm btn-secondary flex items-center space-x-2"
+              >
+                <span>Modifier</span>
+              </button>
+              <button
+                (click)="deleteDelivery(delivery.id)"
+                class="btn btn-sm btn-error flex items-center space-x-2"
+              >
+                <span>Supprimer</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Liste des Livraisons sous forme de Cartes pour les Petits Écrans -->
+  <div class="block lg:hidden space-y-4 mt-6">
+    <div class="flex-shrink-0 mb-4 space-x-2">
+      <label class="font-semibold">Tout sélectionner</label>
+      <input
+        type="checkbox"
+        [checked]="isAllSelected()"
+        (change)="toggleSelectAll()"
+        aria-label="Sélectionner toutes les livraisons"
+      />
+    </div>
+    <div>
+      <span>
+        {{ selectedDeliveries.length }} / {{ filteredDeliveries.length }}
+      </span>
+    </div>
+    <div
+      *ngFor="let delivery of paginatedDeliveries"
+      class="card shadow-md rounded-lg p-4"
+    >
+      <!-- Case à Cocher pour Sélectionner la Livraison -->
+      <div class="flex-shrink-0">
+        <input
+          type="checkbox"
+          [checked]="isSelected(delivery.id)"
+          (change)="toggleSelection(delivery.id)"
+          class="form-checkbox h-4 w-4 transition duration-150 ease-in-out"
+        />
+      </div>
+      <!-- Date Prévue -->
+      <div class="mb-2">
+        <span class="font-semibold">Date Prévue:</span>
+        <span>{{
+          delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm"
+        }}</span>
+      </div>
+
+      <!-- Adresse -->
+      <div class="mb-2">
+        <span class="font-semibold">Adresse:</span>
+        <span>{{ delivery.geocodedAddress.postalCode }}</span>
+      </div>
+
+      <!-- Produit et Quantité -->
+      <ng-container
+        *ngIf="
+          delivery.productDeliveries && delivery.productDeliveries.length > 0;
+          else noProducts
+        "
+      >
+        <div
+          *ngFor="let productDelivery of delivery.productDeliveries"
+          class="mb-2"
+        >
+          <span class="font-semibold">Produit:</span>
+          <span>{{ productDelivery.product.name }}</span>
+        </div>
+        <div
+          *ngFor="let productDelivery of delivery.productDeliveries"
+          class="mb-2"
+        >
+          <span class="font-semibold">Type:</span>
+          <span>{{ productDelivery.product.type }}</span>
+        </div>
+        <div
+          *ngFor="let productDelivery of delivery.productDeliveries"
+          class="mb-2"
+        >
+          <span class="font-semibold">Quantité:</span>
+          <span>{{ productDelivery.quantity }}</span>
+        </div>
+      </ng-container>
+      <ng-template #noProducts>
+        <div class="mb-2">
+          <span class="font-semibold">Produit:</span>
+          <span>N/A</span>
+        </div>
+        <div class="mb-2">
+          <span class="font-semibold">Quantité:</span>
+          <span>N/A</span>
+        </div>
+      </ng-template>
+
+      <!-- Statut -->
+      <div class="mb-2">
+        <span class="font-semibold">Statut:</span>
+        <span
+          class="badge"
+          [ngClass]="{
+            'badge-success': delivery.status.name === 'Livrée',
+            'badge-warning': delivery.status.name === 'En Cours',
+            'badge-error': delivery.status.name === 'Annulée'
+          }"
+        >
+          {{ delivery.status.name }}
+        </span>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex space-x-2 mt-4">
+        <button
+          [routerLink]="['/livraisons', delivery.id]"
+          class="btn btn-sm btn-primary flex items-center space-x-2"
+        >
+          <span>Voir</span>
+        </button>
+        <button
+          [routerLink]="['/livraisons', delivery.id, 'edit']"
+          class="btn btn-sm btn-secondary flex items-center space-x-2"
+        >
+          <span>Modifier</span>
+        </button>
+        <button
+          (click)="deleteDelivery(delivery.id)"
+          class="btn btn-sm btn-error flex items-center space-x-2"
+        >
+          <span>Supprimer</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="flex justify-between items-center mt-4">
+    <button
+      [disabled]="currentPage === 1"
+      (click)="changePage(currentPage - 1)"
+      class="btn btn-outline btn-sm disabled:btn-disabled transition duration-200 ease-in-out hover:bg-gray-300"
+    >
+      Précédent
+    </button>
+
+    <span class="text-sm"> Page {{ currentPage }} sur {{ totalPages }} </span>
+
+    <button
+      [disabled]="currentPage === totalPages"
+      (click)="changePage(currentPage + 1)"
+      class="btn btn-outline btn-sm disabled:btn-disabled transition duration-200 ease-in-out hover:bg-gray-300"
+    >
+      Suivant
+    </button>
+  </div>
+</div>

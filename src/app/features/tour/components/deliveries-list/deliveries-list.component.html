@@ -1,0 +1,7 @@
+<div class="space-y-4">
+  @if (deliveries.length === 0) {
+  <p>Aucune livraison n'a été trouvée</p>
+  } @else { @for (delivery of deliveries; track trackByDeliveryId) {
+  <app-delivery-item [delivery]="delivery"></app-delivery-item>
+  } }
+</div>

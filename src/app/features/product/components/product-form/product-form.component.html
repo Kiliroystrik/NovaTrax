@@ -1,25 +1,114 @@
 <form [formGroup]="productForm" (ngSubmit)="Submit()">
-    <div class="mb-4">
-        <label for="name" class="block text-sm font-medium mr-2">Nom</label>
-        <input type="text" id="name" formControlName="name" class="input input-bordered w-full mt-2">
-    </div>
+  <div class="mb-4">
+    <label for="name" class="block text-sm font-medium mr-2">Nom</label>
+    <input
+      type="text"
+      id="name"
+      formControlName="name"
+      class="input input-bordered w-full mt-2"
+    />
+  </div>
 
-    <div class="mb-4">
-        <label for="description" class="block text-sm font-medium">Description</label>
-        <input type="text" id="description" formControlName="description" class="input input-bordered w-full">
-    </div>
+  <div class="mb-4">
+    <label for="description" class="block text-sm font-medium"
+      >Description</label
+    >
+    <input
+      type="text"
+      id="description"
+      formControlName="description"
+      class="input input-bordered w-full"
+    />
+  </div>
 
-    <div class="mb-4">
-        <label for="unitOfMeasure" class="block text-sm font-medium">Unité de mesure</label>
-        <select id="unitOfMeasure" formControlName="unitOfMeasure" class="input input-bordered w-full">
-            <option value="" disabled selected>Choisissez une unité de mesure</option>
-            @for(unitOfMeasure of unitOfMeasureList; track unitOfMeasure.id){
-            <option [value]="unitOfMeasure.id">{{ unitOfMeasure.name }}</option>
-            }
-        </select>
-    </div>
+  <div class="mb-4">
+    <label for="weightKg" class="block text-sm font-medium">Poids (kg)</label>
+    <input
+      type="number"
+      id="weightKg"
+      formControlName="weightKg"
+      class="input input-bordered w-full"
+    />
+  </div>
 
-    <div class="flex justify-end">
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-    </div>
+  <!-- Champs spécifiques pour un produit liquide -->
+  @if (isLiquidProduct(product!)) {
+  <div class="mb-4">
+    <label for="densityKgPerLiter" class="block text-sm font-medium"
+      >Densité (kg/L)</label
+    >
+    <input
+      type="number"
+      id="densityKgPerLiter"
+      formControlName="densityKgPerLiter"
+      class="input input-bordered w-full"
+    />
+  </div>
+
+  <div class="mb-4">
+    <label for="isTemperatureSensitive" class="block text-sm font-medium"
+      >Sensible à la température</label
+    >
+    <input
+      type="checkbox"
+      id="isTemperatureSensitive"
+      formControlName="isTemperatureSensitive"
+      class="checkbox"
+    />
+  </div>
+
+  <div class="mb-4">
+    <label
+      for="thermalExpansionCoefficientPerDegreeCelsius"
+      class="block text-sm font-medium"
+      >Coefficient de dilatation thermique (°C)</label
+    >
+    <input
+      type="number"
+      step="0.000001"
+      id="thermalExpansionCoefficientPerDegreeCelsius"
+      formControlName="thermalExpansionCoefficientPerDegreeCelsius"
+      class="input input-bordered w-full"
+    />
+  </div>
+  }
+
+  <!-- Champs spécifiques pour un produit solide -->
+  @if (isSolidProduct(product!)) {
+  <div class="mb-4">
+    <label for="lengthCm" class="block text-sm font-medium"
+      >Longueur (cm)</label
+    >
+    <input
+      type="number"
+      id="lengthCm"
+      formControlName="lengthCm"
+      class="input input-bordered w-full"
+    />
+  </div>
+
+  <div class="mb-4">
+    <label for="widthCm" class="block text-sm font-medium">Largeur (cm)</label>
+    <input
+      type="number"
+      id="widthCm"
+      formControlName="widthCm"
+      class="input input-bordered w-full"
+    />
+  </div>
+
+  <div class="mb-4">
+    <label for="heightCm" class="block text-sm font-medium">Hauteur (cm)</label>
+    <input
+      type="number"
+      id="heightCm"
+      formControlName="heightCm"
+      class="input input-bordered w-full"
+    />
+  </div>
+  }
+
+  <div class="flex justify-end">
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+  </div>
 </form>

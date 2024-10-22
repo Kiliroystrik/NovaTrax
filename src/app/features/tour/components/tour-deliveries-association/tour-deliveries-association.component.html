@@ -1,0 +1,108 @@
+<div class="mb-4">
+  <input
+    type="text"
+    placeholder="Rechercher une tournée..."
+    class="input input-bordered w-full max-w-xs mb-4"
+    (input)="onSearch($event)"
+  />
+</div>
+
+<div class="mb-4">
+  <label for="statusFilter">Filtrer par statut :</label>
+  <select
+    id="statusFilter"
+    class="input input-bordered w-full max-w-xs mb-4"
+    (change)="onStatusChange($event)"
+  >
+    @for (status of statusOptions; track $index) {
+    <option [value]="status">
+      {{ status }}
+    </option>
+    }
+  </select>
+</div>
+
+<!-- Section pour les tournées avec un max-height et scroll -->
+<div class="overflow-y-auto max-h-80" (scroll)="onScroll()" #tourList>
+  <table class="table w-full">
+    <thead>
+      <tr>
+        <th>Numéro de tournée</th>
+        <th>Date de Début</th>
+        <th>Date de Fin</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (tour of filteredTours(); track tour.id) {
+      <tr
+        class="hover:bg-base-200 cursor-pointer"
+        [class.bg-info]="tour === selectedTour"
+        (click)="selectTour(tour)"
+      >
+        <td>{{ tour.tourNumber }}</td>
+        <td>{{ tour.startDate | date : "short" }}</td>
+        <td>{{ tour.endDate | date : "short" }}</td>
+      </tr>
+      } @empty {
+      <tr>
+        <td colspan="3" class="text-center">Aucune tournée trouvée.</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (isLoading) {
+  <!-- Animation de chargement pendant le défilement -->
+  <div class="flex justify-center mt-4">
+    <button class="btn btn-outline loading">Chargement des tournées...</button>
+  </div>
+  }
+</div>
+
+<!-- Affichage des détails de la tournée sélectionnée -->
+@if (selectedTour) {
+<div class="mt-6 bg-base-100 shadow-lg p-4 rounded-lg">
+  <h3 class="text-xl font-bold mb-4">Détails de la tournée</h3>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <p class="font-semibold">Numéro de tournée :</p>
+      <p class="text-base">{{ selectedTour.tourNumber }}</p>
+    </div>
+    <div>
+      <p class="font-semibold">Date de début :</p>
+      <p class="text-base">{{ selectedTour.startDate | date : "short" }}</p>
+    </div>
+    <div>
+      <p class="font-semibold">Date de fin :</p>
+      <p class="text-base">{{ selectedTour.endDate | date : "short" }}</p>
+    </div>
+    <div>
+      <p class="font-semibold">Status :</p>
+      <span
+        class="badge { selectedTour.status.name | statusColor : selectedTour.status.type }"
+      >
+        {{ selectedTour.status.name | statusLabel }}
+      </span>
+    </div>
+  </div>
+
+  <h3 class="text-lg font-bold mt-6">Livraisons</h3>
+  <div class="divide-y divide-gray-300 mt-2">
+    @for (delivery of selectedTour.deliveries; track delivery.id) {
+    <div class="py-2">
+      <p class="text-base">
+        <span class="font-semibold">Adresse :</span>
+        {{ delivery.geocodedAddress.fullAddress }}
+      </p>
+    </div>
+    }
+  </div>
+</div>
+
+}
+
+<!-- Bouton pour assigner les livraisons aux tournées -->
+@if (selectedTour) {
+<button class="btn btn-primary mt-4" (click)="assignToTour()">Assigner</button>
+}

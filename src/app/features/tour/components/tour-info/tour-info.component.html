@@ -1,0 +1,132 @@
+<form
+  [formGroup]="tourForm"
+  (ngSubmit)="submit.emit()"
+  class="grid grid-cols-1 md:grid-cols-3 gap-6"
+>
+  <!-- Informations de la Tournée -->
+  <div>
+    <label for="startDate" class="block text-sm font-medium"
+      >Commence le :</label
+    >
+    <input
+      id="startDate"
+      type="datetime-local"
+      formControlName="startDate"
+      class="input input-bordered w-full"
+    />
+    @if (tourForm.get('startDate')?.invalid && (tourForm.get('startDate')?.dirty
+    || tourForm.get('startDate')?.touched)) {
+    <div class="text-red-500 text-sm">La date de début est requise.</div>
+    }
+  </div>
+
+  <div>
+    <label for="endDate" class="block text-sm font-medium">Fini le :</label>
+    <input
+      id="endDate"
+      type="datetime-local"
+      formControlName="endDate"
+      class="input input-bordered w-full"
+    />
+    @if (tourForm.get('endDate')?.invalid && (tourForm.get('endDate')?.dirty ||
+    tourForm.get('endDate')?.touched)) {
+    <div class="text-red-500 text-sm">La date de fin est requise.</div>
+    }
+  </div>
+
+  <!-- Statut -->
+  <!-- <div>
+    <label for="status" class="block text-sm font-medium">Statut :</label>
+    <select
+      id="status"
+      formControlName="status"
+      class="select select-bordered w-full"
+    >
+      @for (status of statuses; track status) {
+      <option [value]="status">{{ status }}</option>
+      }
+    </select>
+    @if(tourForm.get('status')?.invalid && (tourForm.get('status')?.dirty ||
+    tourForm.get('status')?.touched)) {
+    <div class="text-red-500 text-sm">Le statut est requis.</div>
+    }
+  </div> -->
+
+  <!-- Informations du Conducteur -->
+  <div>
+    <label for="driver" class="block text-sm font-medium">Conducteur :</label>
+    <select
+      id="driver"
+      formControlName="driver"
+      class="select select-bordered w-full"
+    >
+      <option value="">Sélectionnez un conducteur</option>
+      <option *ngFor="let driver of drivers" [value]="driver.id">
+        {{ driver.firstName + " " + driver.lastName }}
+      </option>
+    </select>
+    @if(tourForm.get('driver')?.invalid && (tourForm.get('driver')?.dirty ||
+    tourForm.get('driver')?.touched)) {
+    <div class="text-red-500 text-sm">Le conducteur est requis.</div>
+    }
+  </div>
+
+  <!-- Informations du Véhicule -->
+  <div>
+    <label for="vehicle" class="block text-sm font-medium">Véhicule :</label>
+    <select
+      id="vehicle"
+      formControlName="vehicle"
+      class="select select-bordered w-full"
+    >
+      <option value="">Sélectionnez un véhicule</option>
+      <option *ngFor="let vehicle of vehicles" [value]="vehicle.id">
+        {{ vehicle.licensePlate }}
+      </option>
+    </select>
+    @if(tourForm.get('vehicle')?.invalid && (tourForm.get('vehicle')?.dirty ||
+    tourForm.get('vehicle')?.touched)) {
+    <div class="text-red-500 text-sm">Le véhicule est requis.</div>
+    }
+  </div>
+
+  <!-- Entrepôt de chargement -->
+  <div>
+    <label for="loading" class="block text-sm font-medium"
+      >Entrepôt de Chargement :</label
+    >
+    <select
+      id="loading"
+      formControlName="loading"
+      class="select select-bordered w-full"
+    >
+      <option value="">Sélectionnez un entrepôt</option>
+      <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+        {{ warehouse.name }} - {{ warehouse.address.city }}
+      </option>
+    </select>
+    @if(tourForm.get('loading')?.invalid && (tourForm.get('loading')?.dirty ||
+    tourForm.get('loading')?.touched)) {
+    <div class="text-red-500 text-sm">
+      La warehouse de chargement est requise.
+    </div>
+    }
+  </div>
+
+  <!-- Boutons de Soumission -->
+  @if (!isEditing) {
+  <div class="md:col-span-3 flex justify-end space-x-4">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="tourForm.invalid || isSubmitting"
+    >
+      {{ isSubmitting ? "Sauvegarde..." : "Sauvegarder" }}
+    </button>
+  </div>
+  } @if (error) {
+  <div class="col-span-3">
+    <div class="text-red-500 text-sm">{{ error }}</div>
+  </div>
+  }
+</form>

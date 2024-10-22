@@ -1,0 +1,44 @@
+<div class="card bg-base-100 shadow-xl">
+  <div class="card-body">
+    <h2 class="card-title">Ajouter une Livraison</h2>
+    <form [formGroup]="deliveryForm" (ngSubmit)="onSubmit()">
+      <!-- Champs du formulaire -->
+      <div>
+        <label for="address" class="block text-sm font-medium">Adresse :</label>
+        <input
+          id="address"
+          formControlName="geocodedAddress"
+          type="text"
+          class="input input-bordered w-full"
+        />
+        @if (deliveryForm.get('geocodedAddress')?.invalid &&
+        (deliveryForm.get('geocodedAddress')?.dirty ||
+        deliveryForm.get('geocodedAddress')?.touched)) {
+        <div class="text-red-500 text-sm">L'adresse est requise.</div>
+        }
+      </div>
+      <!-- Ajoutez d'autres champs nécessaires -->
+
+      <!-- Boutons -->
+      <div class="flex justify-end space-x-4 mt-4">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="deliveryForm.invalid || isSubmitting"
+        >
+          {{ isSubmitting ? "Ajout en cours..." : "Ajouter" }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">
+          Annuler
+        </button>
+      </div>
+
+      <!-- Affichage des Erreurs -->
+      @if (error) {
+      <div class="mt-2 text-red-500 text-sm">
+        {{ error }}
+      </div>
+      }
+    </form>
+  </div>
+</div>

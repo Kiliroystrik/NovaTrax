@@ -1,0 +1,120 @@
+<!-- src/app/features/tour/components/tour-form/tour-form.component.html -->
+
+<form [formGroup]="tourForm" (ngSubmit)="submit()">
+  <!-- Date de Début -->
+  <div class="mb-4">
+    <label for="startDate" class="block text-sm font-medium"
+      >Commence le :</label
+    >
+    <input
+      type="datetime-local"
+      id="startDate"
+      formControlName="startDate"
+      class="input input-bordered w-full mt-2"
+    />
+    @if(tourForm.get('startDate')?.invalid && (tourForm.get('startDate')?.dirty
+    || tourForm.get('startDate')?.touched)) {
+    <div class="text-red-500 text-sm">La date de début est requise.</div>
+    }
+  </div>
+
+  <!-- Date de Fin -->
+  <div class="mb-4">
+    <label for="endDate" class="block text-sm font-medium">Fini le :</label>
+    <input
+      type="datetime-local"
+      id="endDate"
+      formControlName="endDate"
+      class="input input-bordered w-full mt-2"
+    />
+    @if(tourForm.get('endDate')?.invalid && (tourForm.get('endDate')?.dirty ||
+    tourForm.get('endDate')?.touched)) {
+    <div class="text-red-500 text-sm">La date de fin est requise.</div>
+    }
+  </div>
+
+  <!-- Statut -->
+  <div class="mb-4">
+    <label for="status" class="block text-sm font-medium">Statut :</label>
+    <select
+      id="status"
+      formControlName="status"
+      class="select select-bordered w-full mt-2"
+    >
+      <option value="" disabled selected>Sélectionnez un statut</option>
+      <option *ngFor="let status of statuses" [value]="status.id">
+        {{ status.name }}
+      </option>
+    </select>
+    @if(tourForm.get('status')?.invalid && (tourForm.get('status')?.dirty ||
+    tourForm.get('status')?.touched)) {
+    <div class="text-red-500 text-sm">Le statut est requis.</div>
+    }
+  </div>
+
+  <!-- Conducteur -->
+  <div class="mb-4">
+    <label for="driver" class="block text-sm font-medium">Conducteur :</label>
+    <select
+      id="driver"
+      formControlName="driver"
+      class="select select-bordered w-full mt-2"
+    >
+      <option value="" disabled selected>Sélectionnez un conducteur</option>
+      <option *ngFor="let driver of drivers" [value]="driver.id">
+        {{ driver.firstName }} {{ driver.lastName }}
+      </option>
+    </select>
+    @if (tourForm.get('driver')?.invalid && (tourForm.get('driver')?.dirty ||
+    tourForm.get('driver')?.touched)) {
+    <div class="text-red-500 text-sm">Le conducteur est requis.</div>
+    }
+  </div>
+
+  <!-- Véhicule -->
+  <div class="mb-4">
+    <label for="vehicle" class="block text-sm font-medium">Véhicule :</label>
+    <select
+      id="vehicle"
+      formControlName="vehicle"
+      class="select select-bordered w-full mt-2"
+    >
+      <option value="" disabled selected>Sélectionnez un véhicule</option>
+      <option *ngFor="let vehicle of vehicles" [value]="vehicle.id">
+        {{ vehicle.licensePlate }}
+      </option>
+    </select>
+    @if (tourForm.get('vehicle')?.invalid && (tourForm.get('vehicle')?.dirty ||
+    tourForm.get('vehicle')?.touched)) {
+    <div class="text-red-500 text-sm">Leuvehicule est requis.</div>
+    }
+  </div>
+
+  <!-- Entrepôt de Chargement -->
+  <div class="mb-4">
+    <label for="loading" class="block text-sm font-medium"
+      >Entrepôt de Chargement :</label
+    >
+    <select
+      id="loading"
+      formControlName="loading"
+      class="select select-bordered w-full mt-2"
+    >
+      <option value="" disabled selected>Sélectionnez un entrepôt</option>
+      <option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+        {{ warehouse.name }} - {{ warehouse.address.city }}
+      </option>
+    </select>
+    @if(tourForm.get('loading')?.invalid && (tourForm.get('loading')?.dirty ||
+    tourForm.get('loading')?.touched)) {
+    <div class="text-red-500 text-sm">L'entrepôt de chargement est requis.</div>
+    }
+  </div>
+
+  <!-- Boutons de Soumission -->
+  <div class="flex justify-end space-x-4">
+    <button type="submit" class="btn btn-primary" [disabled]="tourForm.invalid">
+      Enregistrer
+    </button>
+  </div>
+</form>
