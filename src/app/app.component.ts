@@ -23,9 +23,6 @@ export class AppComponent {
   ngOnInit() {
     // Simple vérification de l'état de connexion, mais pas de redirection ici
     this.isLoggedIn = this.authService.isLoggedIn();
-    console.log(
-      this.isLoggedIn ? 'Utilisateur connecté' : 'Utilisateur non connecté'
-    );
 
     // S'abonner au service pour surveiller l'état de chargement
     this.loadingService.loading$.subscribe((isLoading) => {

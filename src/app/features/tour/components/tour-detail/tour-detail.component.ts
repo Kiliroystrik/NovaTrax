@@ -108,7 +108,6 @@ export class TourDetailComponent implements OnInit, OnDestroy {
 
     this.tourForm.valueChanges.subscribe(() => {
       if (this.tourForm.touched || this.tourForm.dirty) {
-        console.log('Le formulaire a été modifié !');
         this.isEditing = true;
         this.isCanceling = true;
       }
@@ -242,8 +241,6 @@ export class TourDetailComponent implements OnInit, OnDestroy {
 
     const formValue = this.tourForm.value;
 
-    console.log(formValue);
-
     // Vérifier que les valeurs ne sont pas null ou undefined
     if (
       formValue.startDate &&
@@ -266,7 +263,6 @@ export class TourDetailComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            console.log('Tournée mise à jour avec succès !');
             this.getTour(); // Rafraîchir les données
             this.isSubmitting = false;
             this.isEditing = false;
@@ -286,7 +282,6 @@ export class TourDetailComponent implements OnInit, OnDestroy {
 
   /** Annuler la mise à jour */
   onCancelUpdate() {
-    console.log('Mise à jour annulée');
     if (this.initialFormValue) {
       this.tourForm.reset(this.initialFormValue);
     }
@@ -311,7 +306,6 @@ export class TourDetailComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.router.navigate(['/tournées']); // Redirection après suppression
-          console.log('Tournée supprimée avec succès !');
         },
         error: (error: any) => {
           console.error('Erreur lors de la suppression de la tournée :', error);
@@ -321,9 +315,7 @@ export class TourDetailComponent implements OnInit, OnDestroy {
   }
 
   /** Annulation de la suppression */
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 
   /** Méthode TrackBy pour les Livraisons */
   trackByDeliveryId(index: number, delivery: Delivery): number {
@@ -416,7 +408,6 @@ export class TourDetailComponent implements OnInit, OnDestroy {
   // ----- Gestion des Ajouts de Livraison -----
   onAddDelivery() {
     // Implémenter la logique pour ajouter une livraison, par exemple ouvrir un formulaire
-    console.log('Ajouter une nouvelle livraison');
     // Vous pouvez ouvrir un modal ou naviguer vers un autre composant/formulaire
   }
 }

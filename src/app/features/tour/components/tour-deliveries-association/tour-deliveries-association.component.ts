@@ -155,24 +155,33 @@ export class TourDeliveriesAssociationComponent implements OnInit {
 
   assignToTour(): void {
     if (!this.selectedTour) {
+      console.warn('Aucune tournée sélectionnée.');
       return;
-    } else {
-      this.tourService
-        .patchTour(this.selectedTour.id, {
-          deliveries: this.selectedDeliveries,
-        })
-        .subscribe({
-          next: (response) => {
-            console.log('Tournée mise à jour', response);
-            this.closeModal.emit(); // Émettre l'événement pour fermer la modale après l'enregistrement
-          },
-          error: (error) => {
-            console.error('Erreur lors de la mise à jour de la tournée', error);
-          },
-          complete: () => {
-            this.selectedTour = null;
-          },
-        });
     }
+
+    if (this.selectedDeliveries.length === 0) {
+      console.warn('Aucune livraison sélectionnée.');
+      return;
+    }
+
+    const deliveriesIds = this.selectedDeliveries.map(
+      (delivery) => delivery.id
+    );
+    console.log('IDs des livraisons sélectionnées:', deliveriesIds);
+
+    this.tourService
+      .addDeliveriesToTour(this.selectedTour.id, deliveriesIds)
+      .subscribe({
+        next: (response) => {
+          console.log('Tournée mise à jour avec les livraisons:', response);
+          this.closeModal.emit(); // Ferme la modale après l'assignation
+        },
+        error: (error) => {
+          console.error('Erreur lors de la mise à jour de la tournée:', error);
+        },
+        complete: () => {
+          this.selectedTour = null; // Réinitialise après l'assignation
+        },
+      });
   }
 }

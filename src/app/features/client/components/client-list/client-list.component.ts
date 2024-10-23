@@ -8,7 +8,7 @@ import { DatePipe } from '@angular/common';
   standalone: true,
   imports: [DatePipe, RouterLink],
   templateUrl: './client-list.component.html',
-  styleUrl: './client-list.component.scss'
+  styleUrl: './client-list.component.scss',
 })
 export class ClientListComponent {
   clients: any[] = [];
@@ -17,19 +17,21 @@ export class ClientListComponent {
   totalPages: number = 1;
   limit: number = 10;
 
-  constructor(private clientService: ClientService) { }
+  constructor(private clientService: ClientService) {}
 
   ngOnInit() {
     this.fetchClients();
   }
 
   fetchClients() {
-    this.clientService.getClients(this.currentPage, this.limit).subscribe((response) => {
-      this.clients = response.items;
-      this.totalItems = response.totalItems;
-      this.currentPage = response.currentPage;
-      this.totalPages = response.totalPages;
-    });
+    this.clientService
+      .getClients(this.currentPage, this.limit)
+      .subscribe((response) => {
+        this.clients = response.items;
+        this.totalItems = response.totalItems;
+        this.currentPage = response.currentPage;
+        this.totalPages = response.totalPages;
+      });
   }
 
   getPagesAroundCurrent(): number[] {
@@ -42,16 +44,16 @@ export class ClientListComponent {
     }
 
     // Ajouter les pages autour de la page actuelle, sans inclure la première (1) ni la dernière page
-    for (let i = Math.max(2, this.currentPage - range); i <= Math.min(this.totalPages - 1, this.currentPage + range); i++) {
+    for (
+      let i = Math.max(2, this.currentPage - range);
+      i <= Math.min(this.totalPages - 1, this.currentPage + range);
+      i++
+    ) {
       pages.push(i);
     }
 
     return pages;
   }
-
-
-
-
 
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
@@ -59,7 +61,6 @@ export class ClientListComponent {
       this.fetchClients();
     }
   }
-
 
   /***Partie Modal de création d'order ****/
 
@@ -82,12 +83,10 @@ export class ClientListComponent {
       next: () => {
         this.closeModal(); // Ferme la modale après soumission
         this.fetchClients();
-        console.log('Commande creée avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la création de la commande :', error);
       },
-    })
+    });
   }
-
 }

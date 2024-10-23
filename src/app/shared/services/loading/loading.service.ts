@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoadingService {
-
   private _loading = new BehaviorSubject<boolean>(false);
 
-  constructor() { }
+  constructor() {}
 
   // Observable pour suivre l'état du chargement
   get loading$() {
@@ -17,12 +16,10 @@ export class LoadingService {
 
   // Activer le chargement
   show() {
-    console.log('Loader activated');
     this._loading.next(true);
   }
 
   hide() {
-    console.log('Loader deactivated');
     this._loading.next(false);
   }
 }

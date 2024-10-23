@@ -81,11 +81,9 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
           if (product.type === 'liquid') {
             const liquidProduct = product as LiquidProduct;
             // Tu peux maintenant accéder aux propriétés spécifiques à un produit liquide
-            console.log('Produit liquide détecté:', liquidProduct);
           } else if (product.type === 'solid') {
             const solidProduct = product as SolidProduct;
             // Tu peux maintenant accéder aux propriétés spécifiques à un produit solide
-            console.log('Produit solide détecté:', solidProduct);
           }
         },
         error: (err) => console.error(err),
@@ -101,7 +99,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       .patchProduct(this.productId, productUpdateData)
       .subscribe({
         next: () => {
-          console.log('Produit mis à jour avec succès !');
           this.getProduct();
           this.closeUpdateModal();
         },
@@ -129,16 +126,13 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     this.productService.deleteProduct(productId).subscribe({
       next: () => {
         this.router.navigate(['/produits']);
-        console.log('Produit supprimé avec succès !');
       },
       error: (error) =>
         console.error('Erreur lors de la suppression du produit :', error),
     });
   }
 
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 
   isLiquidProduct(product: Product): product is LiquidProduct {
     return (product as LiquidProduct).densityKgPerLiter !== undefined;

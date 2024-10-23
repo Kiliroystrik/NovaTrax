@@ -1,0 +1,37 @@
+<table class="min-w-full divide-y">
+  <thead>
+    <tr>
+      <th>...</th>
+      <!-- Autres colonnes -->
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let delivery of deliveries">
+      <td>
+        <input
+          type="checkbox"
+          [checked]="isSelected(delivery.id)"
+          (change)="onToggleSelection(delivery.id)"
+        />
+      </td>
+      <td>{{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm" }}</td>
+      <td>{{ delivery.geocodedAddress.postalCode }}</td>
+      <td>{{ delivery.productDeliveries[0]?.product?.name || "N/A" }}</td>
+      <td>{{ delivery.productDeliveries[0]?.product?.type || "N/A" }}</td>
+      <td>{{ delivery.productDeliveries[0]?.quantity || "N/A" }}</td>
+      <td>
+        <span class="badge" [ngClass]="getBadgeClass(delivery.status.name)">
+          {{ translateStatus(delivery.status.name) }}
+        </span>
+      </td>
+      <td>
+        <button
+          class="btn btn-sm btn-error"
+          (click)="onDeleteDelivery(delivery.id)"
+        >
+          Supprimer
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -70,4 +70,15 @@ export class TourService {
       .delete(this.apiUrl + `/api/tours/${id}`)
       .pipe(finalize(() => this.loadingService.hide()));
   }
+
+  // Méthodes spécifiques
+  addDeliveriesToTour(
+    tourId: number,
+    deliveriesIds: number[]
+  ): Observable<any> {
+    const payload = { deliveriesIds }; // Prépare le tableau des IDs des livraisons
+    return this.http
+      .patch(this.apiUrl + `/api/tours/${tourId}/add-deliveries`, payload)
+      .pipe(finalize(() => this.loadingService.hide()));
+  }
 }

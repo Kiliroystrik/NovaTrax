@@ -85,7 +85,6 @@ export class DriverDetailComponent {
 
     this.driverService.patchDriver(this.driverId, driverUpdateData).subscribe({
       next: () => {
-        console.log('Commande mise à jour avec succès !');
         this.getDriver(); // Rafraîchir la commande
         this.closeUpdateModal(); // Fermer la modale après la mise à jour
       },
@@ -121,7 +120,6 @@ export class DriverDetailComponent {
     this.driverService.deleteDriver(driverId).subscribe({
       next: () => {
         this.router.navigate(['/conducteurs']); // Redirection après suppression
-        console.log('Commande supprimée avec succès !');
       },
       error: (error) =>
         console.error('Erreur lors de la suppression de la commande :', error),
@@ -129,7 +127,5 @@ export class DriverDetailComponent {
   }
 
   /** Annulation de la suppression */
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 }

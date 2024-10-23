@@ -89,7 +89,6 @@ export class TourListComponent {
       next: () => {
         this.closeModal();
         this.fetchTours();
-        console.log('Tournée créé avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la création du tournée :', error);
@@ -110,7 +109,6 @@ export class TourListComponent {
     this.tourService.deleteTour(tourId).subscribe({
       next: () => {
         this.fetchTours();
-        console.log('Tournée supprimée avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la suppression du tournée :', error);
@@ -119,7 +117,5 @@ export class TourListComponent {
   }
 
   // Gérer l'annulation du suppression
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 }

@@ -87,7 +87,6 @@ export class VehicleDetailComponent {
       .patchVehicle(this.vehicleId, vehicleUpdateData)
       .subscribe({
         next: () => {
-          console.log('Commande mise à jour avec succès !');
           this.getVehicle(); // Rafraîchir la commande
           this.closeUpdateModal(); // Fermer la modale après la mise à jour
         },
@@ -123,7 +122,6 @@ export class VehicleDetailComponent {
     this.vehicleService.deleteVehicle(vehicleId).subscribe({
       next: () => {
         this.router.navigate(['/conducteurs']); // Redirection après suppression
-        console.log('Commande supprimée avec succès !');
       },
       error: (error) =>
         console.error('Erreur lors de la suppression de la commande :', error),
@@ -131,7 +129,5 @@ export class VehicleDetailComponent {
   }
 
   /** Annulation de la suppression */
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 }

@@ -1,0 +1,49 @@
+<div class="filters">
+  <div class="dropdown">
+    <h3>Filtrer par code postal</h3>
+    <ul>
+      @for ( postalCode of postalCodes; track $index ) {
+      <li>
+        <label>
+          <input
+            type="checkbox"
+            (change)="togglePostalCode(postalCode, $event)"
+          />
+          {{ postalCode }}
+        </label>
+      </li>
+      }
+    </ul>
+  </div>
+
+  <div class="dropdown">
+    <h3>Filtrer par type de produit</h3>
+    <ul>
+      @for ( productType of productTypes; track $index ) {
+      <li>
+        <label>
+          <input
+            type="checkbox"
+            (change)="toggleProductType(productType, $event)"
+          />
+          {{ productType }}
+        </label>
+      </li>
+      }
+    </ul>
+  </div>
+
+  <div class="dropdown">
+    <h3>Filtrer par statut</h3>
+    <ul>
+      @for ( status of statuses; track $index ) {
+      <li>
+        <label>
+          <input type="checkbox" (change)="toggleStatus(status, $event)" />
+          {{ status }}
+        </label>
+      </li>
+      }
+    </ul>
+  </div>
+</div>

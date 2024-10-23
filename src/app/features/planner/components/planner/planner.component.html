@@ -32,6 +32,15 @@
       <div
         class="w-full bg-base-100 shadow-lg rounded-lg p-4 mt-6 overflow-y-auto"
       >
+        @if (selectedDate) {
+        <!-- Affichage de la date sélectionnée -->
+        <div class="mb-4 text-center">
+          <h3 class="text-xl font-bold">
+            Livraisons pour le {{ selectedDate }}
+          </h3>
+        </div>
+        }
+
         <app-delivery-list
           [deliveries]="filteredDeliveries"
           (deliveryDeleted)="onDeliveryDeleted($event)"

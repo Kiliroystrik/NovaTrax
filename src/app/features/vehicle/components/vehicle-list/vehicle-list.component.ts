@@ -9,9 +9,14 @@ import { VehicleFormComponent } from '../vehicle-form/vehicle-form.component';
 @Component({
   selector: 'app-vehicle-list',
   standalone: true,
-  imports: [DatePipe, RouterLink, DeleteConfirmationModalComponent, VehicleFormComponent],
+  imports: [
+    DatePipe,
+    RouterLink,
+    DeleteConfirmationModalComponent,
+    VehicleFormComponent,
+  ],
   templateUrl: './vehicle-list.component.html',
-  styleUrl: './vehicle-list.component.scss'
+  styleUrl: './vehicle-list.component.scss',
 })
 export class VehicleListComponent {
   vehicles: Vehicle[] = [];
@@ -21,19 +26,21 @@ export class VehicleListComponent {
   limit: number = 10;
   vehicleToDelete: number | null = null;
 
-  constructor(private vehicleService: VehicleService) { }
+  constructor(private vehicleService: VehicleService) {}
 
   ngOnInit() {
     this.fetchVehicles();
   }
 
   fetchVehicles() {
-    this.vehicleService.getVehicles(this.currentPage, this.limit).subscribe((response) => {
-      this.vehicles = response.items;
-      this.totalItems = response.totalItems;
-      this.currentPage = response.currentPage;
-      this.totalPages = response.totalPages;
-    });
+    this.vehicleService
+      .getVehicles(this.currentPage, this.limit)
+      .subscribe((response) => {
+        this.vehicles = response.items;
+        this.totalItems = response.totalItems;
+        this.currentPage = response.currentPage;
+        this.totalPages = response.totalPages;
+      });
   }
 
   getPagesAroundCurrent(): number[] {
@@ -44,7 +51,11 @@ export class VehicleListComponent {
       return pages;
     }
 
-    for (let i = Math.max(2, this.currentPage - range); i <= Math.min(this.totalPages - 1, this.currentPage + range); i++) {
+    for (
+      let i = Math.max(2, this.currentPage - range);
+      i <= Math.min(this.totalPages - 1, this.currentPage + range);
+      i++
+    ) {
       pages.push(i);
     }
 
@@ -74,7 +85,6 @@ export class VehicleListComponent {
       next: () => {
         this.closeModal();
         this.fetchVehicles();
-        console.log('Véhicule créé avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la création du véhicule :', error);
@@ -95,7 +105,6 @@ export class VehicleListComponent {
     this.vehicleService.deleteVehicle(vehicleId).subscribe({
       next: () => {
         this.fetchVehicles();
-        console.log('Véhicule supprimée avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la suppression du véhicule :', error);
@@ -104,7 +113,5 @@ export class VehicleListComponent {
   }
 
   // Gérer l'annulation du suppression
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 }

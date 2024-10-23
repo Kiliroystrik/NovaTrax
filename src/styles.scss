@@ -2,3 +2,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.fc-event-title {
+  margin: 1px;
+  padding: 1px;
+  white-space: normal;
+  cursor: pointer;
+}
+
+.fc-event-time {
+  margin: 1px;
+  padding: 1px;
+  white-space: normal;
+  font-size: 0.9em;
+  width: 3em;
+}

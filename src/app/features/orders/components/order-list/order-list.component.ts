@@ -88,7 +88,6 @@ export class OrderListComponent implements OnInit {
       next: () => {
         this.closeModal();
         this.fetchOrders();
-        console.log('Commande creée avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la création de la commande :', error);
@@ -109,7 +108,6 @@ export class OrderListComponent implements OnInit {
     this.orderService.deleteOrder(orderId).subscribe({
       next: () => {
         this.fetchOrders();
-        console.log('Commande supprimée avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la suppression de la commande :', error);
@@ -118,7 +116,5 @@ export class OrderListComponent implements OnInit {
   }
 
   // Gérer l'annulation de la suppression
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 }

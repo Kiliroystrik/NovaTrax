@@ -47,7 +47,7 @@ export class PlannerComponent implements OnInit {
       right: 'dayGridMonth,timeGridWeek',
     },
     events: [], // Événements affichés dans le calendrier
-    selectable: true, // Permet la sélection des dates et des heures
+    selectable: false, // Permet la sélection des dates et des heures
     unselectAuto: false, // Ne désélectionne pas automatiquement
     editable: false, // Désactive l'édition des événements
     dateClick: this.handleDateClick.bind(this), // Gestionnaire du clic sur une date (vue jour/mois)
@@ -57,7 +57,7 @@ export class PlannerComponent implements OnInit {
     timeZone: 'UTC', // TimeZone de la période visible dans le calendrier
     allDaySlot: true, // Active la case "All Day" pour la vue semaine
     slotMinTime: '00:00:00', // Début de l'affichage des heures
-    slotMaxTime: '00:00:00', // Masque l'affichage des heures
+    slotMaxTime: '24:00:00', // Fin de l'affichage des heures
   };
 
   // ---------- Constructeur et Injection des services ----------
@@ -92,17 +92,7 @@ export class PlannerComponent implements OnInit {
    * @param arg Les détails de la date cliquée.
    */
   handleDateClick(arg: any): void {
-    const clickedDate = arg.dateStr;
-
-    if (this.selectedDate === clickedDate) {
-      // Désélectionner la date manuellement avec la méthode unselect
-      this.selectedDate = null;
-      this.fetchDeliveriesForView(this.startOfPeriod, this.endOfPeriod);
-    } else {
-      // Sélectionner une nouvelle date
-      this.selectedDate = clickedDate;
-      this.updateDeliveriesList();
-    }
+    this.toggleDateSelection(arg.dateStr);
   }
 
   /**
@@ -127,7 +117,39 @@ export class PlannerComponent implements OnInit {
    * @param arg Les détails de l'événement cliqué.
    */
   handleEventClick(arg: any): void {
-    const delivery: Delivery = arg.event.extendedProps.delivery;
+    const eventDate = arg.event.startStr.split('T')[0]; // Extraire uniquement la date de l'événement
+    this.toggleDateSelection(eventDate);
+  }
+
+  /**
+   * Gère la logique commune de sélection ou désélection de date.
+   * @param clickedDate La date cliquée ou de l'événement.
+   */
+  toggleDateSelection(clickedDate: string): void {
+    this.removeDateHighlight(); // Retirer l'ancienne surbrillance
+
+    if (this.selectedDate === clickedDate) {
+      this.selectedDate = null;
+      this.fetchDeliveriesForView(this.startOfPeriod, this.endOfPeriod);
+    } else {
+      this.selectedDate = clickedDate;
+      this.highlightDate(clickedDate); // Ajouter la nouvelle surbrillance
+      this.updateDeliveriesList();
+    }
+  }
+
+  highlightDate(date: string): void {
+    const dayCells = document.querySelectorAll(`[data-date="${date}"]`);
+    dayCells.forEach((cell) => {
+      cell.classList.add('bg-info', 'text-white'); // Ajout de la couleur de surbrillance
+    });
+  }
+
+  removeDateHighlight(): void {
+    const highlightedCells = document.querySelectorAll('[data-date].bg-info');
+    highlightedCells.forEach((cell) => {
+      cell.classList.remove('bg-info', 'text-white');
+    });
   }
 
   // ---------- Gestion des livraisons et de la vue ----------
@@ -159,35 +181,87 @@ export class PlannerComponent implements OnInit {
    * Met à jour les événements dans le calendrier en fonction des livraisons.
    */
   updateCalendarEvents(): void {
-    // Regroupement des livraisons par jour
     const deliveriesByDay = this.groupDeliveriesByDay(this.deliveries);
 
-    // Création des événements dans le calendrier pour chaque jour ou plage horaire
     const events = Object.keys(deliveriesByDay)
       .map((day) => {
         const deliveries = deliveriesByDay[day];
 
-        // Si le mode "All-Day" est activé, toutes les livraisons seront affichées dans la section all-day
         if (this.allDayMode) {
-          return {
-            title: `${deliveries.length} livraison(s) en attente`,
-            start: day, // Représente uniquement la date (sans heure)
-            allDay: true, // Assigne l'événement à la case "all-day"
-            extendedProps: { deliveries },
-          };
+          // Mode All-Day: On groupe les livraisons par jour et par statut
+          return deliveries.reduce((acc, delivery) => {
+            const statusClass = this.getStatusClass(delivery.status.name);
+            const existingEvent = acc.find(
+              (event) => event.extendedProps.status === delivery.status
+            );
+
+            if (existingEvent) {
+              existingEvent.extendedProps.deliveries.push(delivery);
+              existingEvent.title = `${
+                existingEvent.extendedProps.deliveries.length
+              } livraison(s) ${this.translateStatus(delivery.status.name)}`;
+            } else {
+              acc.push({
+                title: `1 livraison ${this.translateStatus(
+                  delivery.status.name
+                )}`,
+                start: day,
+                allDay: true,
+                classNames: [statusClass],
+                extendedProps: {
+                  deliveries: [delivery],
+                  status: delivery.status,
+                },
+              });
+            }
+            return acc;
+          }, [] as any[]);
         } else {
-          // Sinon, les livraisons avec heures précises seront assignées aux plages horaires correspondantes
-          return deliveries.map((delivery) => ({
-            title: `ID: ${delivery.id} - ${delivery.status.name}`,
-            start: new Date(delivery.expectedDeliveryDate).toISOString(),
-            allDay: false, // Affichage dans les plages horaires
-            extendedProps: { delivery },
-          }));
+          // Mode non All-Day: On s'assure que chaque livraison a une heure
+          return deliveries.map((delivery) => {
+            const deliveryDate = new Date(delivery.expectedDeliveryDate);
+
+            // Si aucune heure n'est spécifiée, on ajoute une heure par défaut (ex: 09:00)
+            if (!deliveryDate.getHours() && !deliveryDate.getMinutes()) {
+              deliveryDate.setHours(9, 0, 0); // Heure par défaut 09:00
+            }
+
+            return {
+              title: `ID: ${delivery.id} - ${this.translateStatus(
+                delivery.status.name
+              )}`,
+              start: deliveryDate.toISOString(), // Format ISO avec heure
+              allDay: false,
+              classNames: [this.getStatusClass(delivery.status.name)],
+              extendedProps: { delivery },
+            };
+          });
         }
       })
       .flat();
 
     this.calendarOptions.events = events; // Mise à jour des événements dans le calendrier
+  }
+
+  /**
+   * Retourne la classe associée à un statut de livraison (DaisyUI/Tailwind CSS)
+   * @param status Le statut de la livraison
+   */
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'Scheduled':
+        return 'bg-primary text-white border border-primary'; // Couleur primaire pour "Scheduled"
+      case 'In Transit':
+        return 'bg-secondary text-white border border-secondary'; // Couleur secondaire pour "In Transit"
+      case 'Delivered':
+        return 'bg-success text-white border border-success'; // Couleur success pour "Delivered"
+      case 'Failed':
+        return 'bg-error text-white border border-error'; // Couleur error pour "Failed"
+      case 'Pending':
+        return 'bg-warning text-white border border-warning'; // Couleur warning pour "Pending"
+      default:
+        return 'bg-neutral text-white border border-neutral'; // Couleur neutre pour les statuts non gérés
+    }
   }
 
   /**
@@ -290,6 +364,35 @@ export class PlannerComponent implements OnInit {
    * @param deliveryIds Les IDs des livraisons sélectionnées.
    */
   onAssignToTour(deliveryIds: number[]): void {
-    this.openTourAssociationModal();
+    console.log('Livraisons à assigner:', deliveryIds);
+    if (deliveryIds.length > 0) {
+      this.selectedDeliveries = this.deliveries.filter((d) =>
+        deliveryIds.includes(d.id)
+      );
+      this.openTourAssociationModal();
+    } else {
+      console.warn('Aucune livraison sélectionnée pour être assignée.');
+    }
+  }
+
+  /**
+   * Traduis les status de livraisons.
+   * @param status Le statut de livraison à traduire.
+   */
+  translateStatus(status: string): string {
+    switch (status) {
+      case 'Pending':
+        return 'En attente';
+      case 'In Transit':
+        return 'En transit';
+      case 'Scheduled':
+        return 'Programmé';
+      case 'Failed':
+        return 'Echoué';
+      case 'Delivered':
+        return 'Livrée';
+      default:
+        return 'Status non reconnu';
+    }
   }
 }

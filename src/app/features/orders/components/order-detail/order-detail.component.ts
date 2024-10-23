@@ -112,7 +112,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
 
     this.orderService.patchOrder(this.orderId, orderUpdateData).subscribe({
       next: () => {
-        console.log('Commande mise à jour avec succès !');
         this.getOrder(); // Rafraîchir la commande
         this.closeUpdateModal(); // Fermer la modale après la mise à jour
       },
@@ -148,7 +147,6 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
     this.orderService.deleteOrder(orderId).subscribe({
       next: () => {
         this.router.navigate(['/commandes']); // Redirection après suppression
-        console.log('Commande supprimée avec succès !');
       },
       error: (error) =>
         console.error('Erreur lors de la suppression de la commande :', error),
@@ -156,7 +154,5 @@ export class OrderDetailComponent implements OnInit, OnDestroy {
   }
 
   /** Annulation de la suppression */
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 }

@@ -5,11 +5,11 @@
 
   <p>
     <strong>Date Attendue :</strong>
-    {{ delivery.expectedDeliveryDate | date : "short" }}
+    {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm" : "UTC" }}
   </p>
   <p>
     <strong>Date Réelle :</strong>
-    {{ delivery.actualDeliveryDate | date : "short" }}
+    {{ delivery.actualDeliveryDate | date : "short" : "UTC" }}
   </p>
   <p><strong>Tournée :</strong> {{ delivery.tour.tourNumber }}</p>
   <!-- <p><strong>Compagnie :</strong> {{ delivery.company.name }}</p> -->

@@ -88,7 +88,6 @@ export class ProductListComponent {
       next: () => {
         this.closeModal();
         this.fetchProducts();
-        console.log('Commande creée avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la création de la commande :', error);
@@ -109,7 +108,6 @@ export class ProductListComponent {
     this.productService.deleteProduct(productId).subscribe({
       next: () => {
         this.fetchProducts();
-        console.log('Commande supprimée avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la suppression de la commande :', error);
@@ -118,9 +116,7 @@ export class ProductListComponent {
   }
 
   // Gérer l'annulation de la suppression
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 
   isLiquidProduct(product: Product): product is LiquidProduct {
     return (product as LiquidProduct).densityKgPerLiter !== undefined;

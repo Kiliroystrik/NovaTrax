@@ -1,72 +1,208 @@
-<!-- src/app/features/delivery/components/delivery-list/delivery-list.component.html -->
-
 <div class="delivery-list p-6 min-h-screen">
   <h1 class="text-3xl font-bold mb-6 text-center lg:text-left">
     Gestion des Livraisons
   </h1>
 
-  <!-- Tableau des Livraisons pour les Grands Écrans -->
+  <!-- Section de filtrage et de tri -->
   <div
-    class="mb-2 flex flex-row flex-wrap items-center lg:flex-row items-start lg:items-center sm:flex-row"
+    class="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between bg-gray-50 p-4 rounded-lg shadow-md"
   >
-    <!-- Dropdown pour Filtrer par Type de Produit -->
-    <div class="dropdown dropdown-bottom">
-      <div tabindex="0" role="button" class="btn m-1 btn-sm">
-        Filtrer par type de produit
+    <!-- Filtres groupés dans des dropdowns -->
+    <div class="flex flex-wrap gap-4 items-center">
+      <!-- Filtrer par code postal -->
+      <div class="dropdown dropdown-bottom">
+        <div tabindex="0" role="button" class="btn btn-sm">
+          Filtrer par code postal
+        </div>
+        <ul
+          class="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow"
+        >
+          <li *ngFor="let delivery of deliveries">
+            <label class="form-control cursor-pointer">
+              <span class="label-text">{{
+                delivery.geocodedAddress.postalCode
+              }}</span>
+              <input
+                type="checkbox"
+                [checked]="
+                  selectedPostalCodes.includes(
+                    delivery.geocodedAddress.postalCode
+                  )
+                "
+                (change)="
+                  filterByPostalCode(
+                    delivery.geocodedAddress.postalCode,
+                    $event
+                  )
+                "
+                class="checkbox checkbox-primary"
+              />
+            </label>
+          </li>
+        </ul>
       </div>
-      <ul
-        tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow flex flex-col gap-1"
-      >
-        <li>
-          <!-- Bouton de Tri par Code Postal -->
-          <button class="btn m-1 btn-sm" (click)="sortByPostalCode()">
-            Trier par Code Postal
-          </button>
-        </li>
-        <li>
-          <!-- Bouton de Tri par date de livraison -->
-          <button class="btn m-1 btn-sm" (click)="sortByDeliveryDate()">
-            Trier par Date de Livraison
-          </button>
-        </li>
-      </ul>
-    </div>
-    <!-- Dropdown pour Filtrer par Type de Produit -->
-    <div class="dropdown dropdown-bottom">
-      <div tabindex="0" role="button" class="btn m-1 btn-sm">
-        Filtrer par type de produit
+
+      <!-- Filtrer par statut -->
+      <div class="dropdown dropdown-bottom">
+        <div tabindex="0" role="button" class="btn btn-sm">
+          Filtrer par statut
+        </div>
+        <ul
+          class="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow"
+        >
+          <li
+            *ngFor="
+              let status of [
+                'Pending',
+                'Delivered',
+                'In Transit',
+                'Scheduled',
+                'Failed'
+              ]
+            "
+          >
+            <label class="form-control cursor-pointer">
+              <span class="label-text">{{ translateStatus(status) }}</span>
+              <input
+                type="checkbox"
+                [checked]="selectedStatuses.includes(status)"
+                (change)="filterByStatus(status, $event)"
+                class="checkbox checkbox-primary"
+              />
+            </label>
+          </li>
+        </ul>
       </div>
-      <ul
-        tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow flex flex-col gap-1"
-      >
-        <li *ngFor="let productType of productTypes; let i = index">
-          <label class="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              #cb
-              [checked]="selectedProductTypes.includes(productType)"
-              (change)="filterByProductType(productType, cb.checked)"
-              class="form-checkbox h-4 w-4 text-indigo-600"
-            />
 
-            <span>{{ productType }}</span>
-          </label>
-        </li>
-      </ul>
+      <!-- Filtrer par type de produit -->
+      <div class="dropdown dropdown-bottom">
+        <div tabindex="0" role="button" class="btn btn-sm">
+          Filtrer par type de produit
+        </div>
+        <ul
+          class="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow"
+        >
+          <li *ngFor="let productType of productTypes">
+            <label class="form-control cursor-pointer">
+              <span class="label-text">{{ productType }}</span>
+              <input
+                type="checkbox"
+                [checked]="selectedProductTypes.includes(productType)"
+                (change)="filterByProductType(productType, $event)"
+                class="checkbox checkbox-primary"
+              />
+            </label>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <!-- Boutons d'Action lorsque des Livraisons sont Sélectionnées -->
-    <div
-      *ngIf="selectedDeliveries.length > 0"
-      class="flex gap-1 m-1 flex-wrap lg:mt-0"
-    >
-      <button class="btn btn-sm btn-primary" (click)="assignToTourMethod()">
-        Assigner à une tournée
+    <!-- Section de tri -->
+    <div class="flex gap-4">
+      <button class="btn btn-sm" (click)="sortByPostalCode()">
+        Trier par Code Postal
       </button>
-      <button class="btn btn-sm btn-secondary">Créer une tournée</button>
+      <button class="btn btn-sm" (click)="sortByDeliveryDate()">
+        Trier par Date de Livraison
+      </button>
     </div>
+  </div>
+
+  <!-- Badges pour les filtres sélectionnés et bouton pour réinitialiser les filtres -->
+  <div class="mb-4 flex flex-wrap gap-2">
+    <!-- Badges pour les statuts filtrés -->
+    <ng-container *ngFor="let status of selectedStatuses">
+      <div
+        class="flex items-center bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-medium border border-blue-300"
+      >
+        {{ translateStatus(status) }}
+        <button
+          (click)="removeStatus(status)"
+          class="ml-2 hover:text-blue-600 transition-colors duration-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Badges pour les types de produits filtrés -->
+    <ng-container *ngFor="let productType of selectedProductTypes">
+      <div
+        class="flex items-center bg-green-100 text-green-800 rounded-full px-3 py-1 text-sm font-medium border border-green-300"
+      >
+        {{ productType }}
+        <button
+          (click)="removeProductType(productType)"
+          class="ml-2 hover:text-green-600 transition-colors duration-150"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Badge pour réinitialiser tous les filtres -->
+    <ng-container
+      *ngIf="
+        selectedPostalCodes.length ||
+        selectedStatuses.length ||
+        selectedProductTypes.length
+      "
+    >
+      <button
+        (click)="clearAllFilters()"
+        class="bg-red-100 text-red-800 rounded-full px-4 py-1 text-sm font-medium border border-red-300 hover:bg-red-200 transition duration-150"
+      >
+        Réinitialiser les filtres
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4 inline ml-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </ng-container>
+  </div>
+
+  <!-- Boutons d'Action lorsque des Livraisons sont Sélectionnées -->
+  <div *ngIf="selectedDeliveries.length > 0" class="mb-4 flex gap-2">
+    <button class="btn btn-sm btn-primary" (click)="assignToTourMethod()">
+      Assigner à une tournée
+    </button>
+    <button class="btn btn-sm btn-secondary">Créer une tournée</button>
   </div>
 
   <!-- Tableau pour les Grands Écrans -->
@@ -141,7 +277,9 @@
             />
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm">
-            {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm" }}
+            {{
+              delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm" : "UTC"
+            }}
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm">
             {{ delivery.geocodedAddress.postalCode }}<br />
@@ -195,15 +333,8 @@
             <ng-template #noQuantities>N/A</ng-template>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm">
-            <span
-              class="badge"
-              [ngClass]="{
-                'badge-success': delivery.status.name === 'Livrée',
-                'badge-warning': delivery.status.name === 'En Cours',
-                'badge-error': delivery.status.name === 'Annulée'
-              }"
-            >
-              {{ delivery.status.name }}
+            <span class="badge" [ngClass]="getBadgeClass(delivery.status.name)">
+              {{ translateStatus(delivery.status.name) }}
             </span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm">
@@ -266,7 +397,7 @@
       <div class="mb-2">
         <span class="font-semibold">Date Prévue:</span>
         <span>{{
-          delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm"
+          delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm : UTC"
         }}</span>
       </div>
 
@@ -319,15 +450,8 @@
       <!-- Statut -->
       <div class="mb-2">
         <span class="font-semibold">Statut:</span>
-        <span
-          class="badge"
-          [ngClass]="{
-            'badge-success': delivery.status.name === 'Livrée',
-            'badge-warning': delivery.status.name === 'En Cours',
-            'badge-error': delivery.status.name === 'Annulée'
-          }"
-        >
-          {{ delivery.status.name }}
+        <span class="badge" [ngClass]="getBadgeClass(delivery.status.name)">
+          {{ translateStatus(delivery.status.name) }}
         </span>
       </div>
 

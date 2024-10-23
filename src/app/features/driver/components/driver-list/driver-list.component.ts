@@ -1,4 +1,3 @@
-
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DriverService } from '../../services/driver.service';
 import { DatePipe } from '@angular/common';
@@ -10,9 +9,14 @@ import { Driver } from '../../interfaces/driver';
 @Component({
   selector: 'app-driver-list',
   standalone: true,
-  imports: [DatePipe, RouterLink, DeleteConfirmationModalComponent, DriverFormComponent],
+  imports: [
+    DatePipe,
+    RouterLink,
+    DeleteConfirmationModalComponent,
+    DriverFormComponent,
+  ],
   templateUrl: './driver-list.component.html',
-  styleUrl: './driver-list.component.scss'
+  styleUrl: './driver-list.component.scss',
 })
 export class DriverListComponent {
   drivers: Driver[] = [];
@@ -22,19 +26,21 @@ export class DriverListComponent {
   limit: number = 10;
   driverToDelete: number | null = null;
 
-  constructor(private driverService: DriverService) { }
+  constructor(private driverService: DriverService) {}
 
   ngOnInit() {
     this.fetchDrivers();
   }
 
   fetchDrivers() {
-    this.driverService.getDrivers(this.currentPage, this.limit).subscribe((response) => {
-      this.drivers = response.items;
-      this.totalItems = response.totalItems;
-      this.currentPage = response.currentPage;
-      this.totalPages = response.totalPages;
-    });
+    this.driverService
+      .getDrivers(this.currentPage, this.limit)
+      .subscribe((response) => {
+        this.drivers = response.items;
+        this.totalItems = response.totalItems;
+        this.currentPage = response.currentPage;
+        this.totalPages = response.totalPages;
+      });
   }
 
   getPagesAroundCurrent(): number[] {
@@ -45,7 +51,11 @@ export class DriverListComponent {
       return pages;
     }
 
-    for (let i = Math.max(2, this.currentPage - range); i <= Math.min(this.totalPages - 1, this.currentPage + range); i++) {
+    for (
+      let i = Math.max(2, this.currentPage - range);
+      i <= Math.min(this.totalPages - 1, this.currentPage + range);
+      i++
+    ) {
       pages.push(i);
     }
 
@@ -75,7 +85,6 @@ export class DriverListComponent {
       next: () => {
         this.closeModal();
         this.fetchDrivers();
-        console.log('Conducteur créé avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la création du conducteur :', error);
@@ -96,7 +105,6 @@ export class DriverListComponent {
     this.driverService.deleteDriver(driverId).subscribe({
       next: () => {
         this.fetchDrivers();
-        console.log('Conducteur supprimée avec succès !');
       },
       error: (error) => {
         console.error('Erreur lors de la suppression du conducteur :', error);
@@ -105,7 +113,5 @@ export class DriverListComponent {
   }
 
   // Gérer l'annulation du suppression
-  onCancelDelete() {
-    console.log('Suppression annulée');
-  }
+  onCancelDelete() {}
 }

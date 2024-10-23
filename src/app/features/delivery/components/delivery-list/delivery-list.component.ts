@@ -49,6 +49,8 @@ export class DeliveryListComponent implements OnInit, OnChanges {
 
   // Livraisons filtrées basées sur les filtres appliqués
   filteredDeliveries: Delivery[] = [];
+  selectedPostalCodes: string[] = [];
+  selectedStatuses: string[] = [];
 
   // Constructeur injectant les services
   constructor(private deliveryService: DeliveryService) {}
@@ -71,17 +73,32 @@ export class DeliveryListComponent implements OnInit, OnChanges {
    * Applique les filtres sélectionnés sur les livraisons.
    */
   applyFilter(): void {
+    // Commencer avec toutes les livraisons
+    this.filteredDeliveries = [...this.deliveries];
+
+    // Filtrer par type de produit
     if (this.selectedProductTypes.length > 0) {
-      // Filtrer selon les types de produits sélectionnés
-      this.filteredDeliveries = this.deliveries.filter((delivery) =>
+      this.filteredDeliveries = this.filteredDeliveries.filter((delivery) =>
         delivery.productDeliveries?.some((pd) =>
           this.selectedProductTypes.includes(pd.product.type)
         )
       );
-    } else {
-      // Si aucun filtre, afficher toutes les livraisons
-      this.filteredDeliveries = [...this.deliveries];
     }
+
+    // Filtrer par code postal
+    if (this.selectedPostalCodes.length > 0) {
+      this.filteredDeliveries = this.filteredDeliveries.filter((delivery) =>
+        this.selectedPostalCodes.includes(delivery.geocodedAddress.postalCode)
+      );
+    }
+
+    // Filtrer par statut
+    if (this.selectedStatuses.length > 0) {
+      this.filteredDeliveries = this.filteredDeliveries.filter((delivery) =>
+        this.selectedStatuses.includes(delivery.status.name)
+      );
+    }
+
     // Réinitialiser la pagination après application des filtres
     this.currentPage = 1;
   }
@@ -89,9 +106,10 @@ export class DeliveryListComponent implements OnInit, OnChanges {
   /**
    * Filtre les livraisons par type de produit.
    * @param productType Le type de produit sélectionné.
-   * @param isChecked Si le type est activé ou désactivé.
+   * @param event L'événement de changement de l'input checkbox.
    */
-  filterByProductType(productType: string, isChecked: boolean): void {
+  filterByProductType(productType: string, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
     if (isChecked) {
       if (!this.selectedProductTypes.includes(productType)) {
         this.selectedProductTypes.push(productType);
@@ -125,6 +143,88 @@ export class DeliveryListComponent implements OnInit, OnChanges {
     } else {
       this.productTypes = [];
     }
+  }
+
+  /**
+   * Filtre les livraisons par code postal.
+   * @param postalCode Le code postal sélectionné.
+   * @param event L'événement de changement de l'input checkbox.
+   */
+  filterByPostalCode(postalCode: string, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (isChecked) {
+      if (!this.selectedPostalCodes.includes(postalCode)) {
+        this.selectedPostalCodes.push(postalCode);
+      }
+    } else {
+      this.selectedPostalCodes = this.selectedPostalCodes.filter(
+        (code) => code !== postalCode
+      );
+    }
+    this.applyFilter(); // Réappliquer le filtre après modification
+  }
+
+  /**
+   * Vide la liste des codes postaux.
+   */
+  clearPostalCodes(): void {
+    this.selectedPostalCodes = [];
+    this.applyFilter(); // Réappliquer le filtre après modification
+  }
+
+  /**
+   * Vide la liste des types de produits.
+   */
+  clearProductTypes(): void {
+    this.selectedProductTypes = [];
+    this.applyFilter(); // Réappliquer le filtre après modification
+  }
+
+  /**
+   * Filtre sur les statuts des livraisons.
+   * @param status Le statut sélectionné.
+   * @param event L'événement de changement de l'input checkbox.
+   */
+  filterByStatus(status: string, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (isChecked) {
+      if (!this.selectedStatuses.includes(status)) {
+        this.selectedStatuses.push(status);
+      }
+    } else {
+      this.selectedStatuses = this.selectedStatuses.filter((s) => s !== status);
+    }
+    this.applyFilter(); // Réappliquer le filtre après modification
+  }
+
+  // Méthode pour supprimer un code postal du filtre
+  removePostalCode(postalCode: string): void {
+    this.selectedPostalCodes = this.selectedPostalCodes.filter(
+      (code) => code !== postalCode
+    );
+    this.applyFilter(); // Réappliquer les filtres après modification
+  }
+
+  // Méthode pour supprimer un statut du filtre
+  removeStatus(status: string): void {
+    this.selectedStatuses = this.selectedStatuses.filter((s) => s !== status);
+    this.applyFilter(); // Réappliquer les filtres après modification
+  }
+
+  // Méthode pour supprimer un type de produit du filtre
+  removeProductType(productType: string): void {
+    this.selectedProductTypes = this.selectedProductTypes.filter(
+      (type) => type !== productType
+    );
+    this.applyFilter(); // Réappliquer les filtres après modification
+  }
+
+  // Méthode pour réinitialiser tous les filtres
+  clearAllFilters(): void {
+    this.selectedPostalCodes = [];
+    this.selectedStatuses = [];
+    this.selectedProductTypes = [];
+    this.applyFilter(); // Réappliquer les filtres après réinitialisation
   }
 
   // ---------- Sorting Methods ----------
@@ -287,7 +387,51 @@ export class DeliveryListComponent implements OnInit, OnChanges {
    */
   public assignToTourMethod(): void {
     if (this.selectedDeliveries.length > 0) {
+      console.log(
+        'Assignation des livraisons:',
+        this.selectedDeliveries.map((d) => d.id)
+      );
       this.assignToTour.emit(this.selectedDeliveries.map((d) => d.id));
+    } else {
+      console.warn('Aucune livraison sélectionnée pour l’assignation.');
+    }
+  }
+
+  getBadgeClass(status: string): string {
+    switch (status) {
+      case 'Delivered':
+        return 'badge-success text-white'; // Vert pour Delivered
+      case 'In Transit':
+        return 'badge-warning text-white'; // Jaune pour In Transit
+      case 'Scheduled':
+        return 'badge-primary text-white'; // Bleu pour Scheduled
+      case 'Failed':
+        return 'badge-error text-white'; // Rouge pour Failed
+      case 'Pending':
+        return 'badge-warning text-white'; // Jaune pour Pending
+      default:
+        return 'badge-neutral text-white'; // Gris pour les statuts non gérés
+    }
+  }
+
+  /**
+   * Traduis les status de livraisons.
+   * @param status Le statut de livraison à traduire.
+   */
+  translateStatus(status: string): string {
+    switch (status) {
+      case 'Pending':
+        return 'En attente';
+      case 'In Transit':
+        return 'En transit';
+      case 'Scheduled':
+        return 'Programmé';
+      case 'Failed':
+        return 'Echoué';
+      case 'Delivered':
+        return 'Livrée';
+      default:
+        return 'Status non reconnu';
     }
   }
 }
