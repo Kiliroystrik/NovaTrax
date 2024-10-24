@@ -36,7 +36,7 @@
         <!-- Affichage de la date sélectionnée -->
         <div class="mb-4 text-center">
           <h3 class="text-xl font-bold">
-            Livraisons pour le {{ selectedDate }}
+            Livraisons pour le {{ selectedDate | date : "dd/MM/yyyy" }}
           </h3>
         </div>
         }

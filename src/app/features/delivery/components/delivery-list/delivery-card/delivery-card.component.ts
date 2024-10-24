@@ -1,15 +1,16 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Delivery } from '../../../interfaces/Delivery';
+import { CommonModule } from '@angular/common';
 import { DeliveryItemComponent } from '../delivery-item/delivery-item.component';
 
 @Component({
-  selector: 'app-delivery-table',
+  selector: 'app-delivery-card',
   standalone: true,
-  imports: [DeliveryItemComponent],
-  templateUrl: './delivery-table.component.html',
-  styleUrl: './delivery-table.component.scss',
+  imports: [CommonModule, DeliveryItemComponent],
+  templateUrl: './delivery-card.component.html',
+  styleUrl: './delivery-card.component.scss',
 })
-export class DeliveryTableComponent {
+export class DeliveryCardComponent {
   @Input() deliveries: Delivery[] = [];
   @Input() selectedDeliveries: Delivery[] = [];
 
@@ -25,7 +26,6 @@ export class DeliveryTableComponent {
     return this.deliveries.every((delivery) => this.isSelected(delivery.id));
   }
 
-  // Méthode pour basculer la sélection de toutes les livraisons
   onToggleSelectAll(): void {
     this.toggleSelectAll.emit();
   }

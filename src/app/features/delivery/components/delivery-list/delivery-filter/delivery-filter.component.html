@@ -1,0 +1,181 @@
+<div
+  class="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between bg-base-100 p-4 rounded-lg shadow-md"
+>
+  <!-- Filtres groupés dans des dropdowns -->
+  <div class="flex flex-wrap gap-4 items-center">
+    <!-- Filtrer par code postal -->
+    <div class="dropdown dropdown-bottom">
+      <div tabindex="0" role="button" class="btn btn-sm">
+        Filtrer par code postal
+      </div>
+      <ul class="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow">
+        @for (delivery of deliveries; track delivery.id) {
+        <li>
+          <label class="form-control cursor-pointer">
+            <span class="label-text">{{
+              delivery.geocodedAddress.postalCode
+            }}</span>
+            <input
+              type="checkbox"
+              [checked]="
+                selectedPostalCodes.includes(
+                  delivery.geocodedAddress.postalCode
+                )
+              "
+              (change)="
+                filterByPostalCode(delivery.geocodedAddress.postalCode, $event)
+              "
+              class="checkbox checkbox-primary"
+            />
+          </label>
+        </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Filtrer par statut -->
+    <div class="dropdown dropdown-bottom">
+      <div tabindex="0" role="button" class="btn btn-sm">
+        Filtrer par statut
+      </div>
+      <ul class="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow">
+        @for(status of ['Pending', 'Delivered', 'In Transit', 'Scheduled',
+        'Failed']; track $index) {
+        <li>
+          <label class="form-control cursor-pointer">
+            <span class="label-text">{{ translateStatus(status) }}</span>
+            <input
+              type="checkbox"
+              [checked]="selectedStatuses.includes(status)"
+              (change)="filterByStatus(status, $event)"
+              class="checkbox checkbox-primary"
+            />
+          </label>
+        </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Filtrer par type de produit -->
+    <div class="dropdown dropdown-bottom">
+      <div tabindex="0" role="button" class="btn btn-sm">
+        Filtrer par type de produit
+      </div>
+      <ul class="dropdown-content menu bg-base-100 rounded-box w-52 p-2 shadow">
+        @for( productType of productTypes; track $index) {
+        <li>
+          <label class="form-control cursor-pointer">
+            <span class="label-text">{{ productType }}</span>
+            <input
+              type="checkbox"
+              [checked]="selectedProductTypes.includes(productType)"
+              (change)="filterByProductType(productType, $event)"
+              class="checkbox checkbox-primary"
+            />
+          </label>
+        </li>
+        }
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section de tri -->
+  <div class="flex gap-4 flex-wrap">
+    <button class="btn btn-sm" (click)="sortByPostalCode.emit()">
+      Trier par Code Postal
+    </button>
+    <button class="btn btn-sm" (click)="sortByDeliveryDate.emit()">
+      Trier par Date de Livraison
+    </button>
+  </div>
+</div>
+
+<!-- Badges pour les filtres sélectionnés et bouton pour réinitialiser les filtres -->
+<div class="mb-4 flex flex-wrap gap-2">
+  <!-- Badges pour les statuts filtrés -->
+  @for(status of selectedStatuses; track $index) {
+  <ng-container>
+    <div
+      class="flex items-center bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-medium border border-blue-300"
+    >
+      {{ translateStatus(status) }}
+      <button
+        (click)="onRemoveStatus(status)"
+        class="ml-2 hover:text-blue-600 transition-colors duration-150"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+  </ng-container>
+  }
+
+  <!-- Badges pour les types de produits filtrés -->
+  @for(productType of selectedProductTypes; track $index) {
+  <ng-container>
+    <div
+      class="flex items-center bg-green-100 text-green-800 rounded-full px-3 py-1 text-sm font-medium border border-green-300"
+    >
+      {{ productType }}
+      <button
+        (click)="onRemoveProductType(productType)"
+        class="ml-2 hover:text-green-600 transition-colors duration-150"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+  </ng-container>
+  }
+
+  <!-- Badge pour réinitialiser tous les filtres -->
+  @if (selectedPostalCodes.length || selectedStatuses.length ||
+  selectedProductTypes.length) {
+  <ng-container>
+    <button
+      (click)="onClearAllFilters()"
+      class="bg-red-100 text-red-800 rounded-full px-4 py-1 text-sm font-medium border border-red-300 hover:bg-red-200 transition duration-150"
+    >
+      Réinitialiser les filtres
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-4 w-4 inline ml-1"
+        fill="none"
+        viewBox="0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
+  </ng-container>
+  }
+</div>

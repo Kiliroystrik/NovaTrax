@@ -1,0 +1,26 @@
+<div class="space-y-4 mt-6">
+  <div class="flex items-center mb-4 space-x-2">
+    <label class="font-semibold">Tout sélectionner</label>
+    <input
+      type="checkbox"
+      [checked]="isAllSelected()"
+      (change)="onToggleSelectAll()"
+      aria-label="Sélectionner toutes les livraisons"
+      class="form-checkbox h-4 w-4 text-indigo-600"
+    />
+    <span> {{ selectedDeliveries.length }} / {{ deliveries.length }} </span>
+  </div>
+
+  <!-- Utilisation de DeliveryItemComponent -->
+  @for(delivery of deliveries; track delivery.id){
+  <ng-container>
+    <app-delivery-item
+      [delivery]="delivery"
+      [isSelected]="isSelected(delivery.id)"
+      viewMode="card"
+      (toggleSelection)="toggleSelection.emit($event)"
+      (deleteDelivery)="deleteDelivery.emit($event)"
+    ></app-delivery-item>
+  </ng-container>
+  }
+</div>

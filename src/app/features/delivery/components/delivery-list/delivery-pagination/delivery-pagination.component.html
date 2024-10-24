@@ -1,11 +1,18 @@
-<div class="pagination">
-  <button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+<div class="flex justify-between items-center mt-4">
+  <button
+    [disabled]="currentPage === 1"
+    (click)="onPrevious()"
+    class="btn btn-outline btn-sm disabled:btn-disabled transition duration-200 ease-in-out hover:bg-gray-300"
+  >
     Précédent
   </button>
-  <span>Page {{ currentPage }} sur {{ totalPages }}</span>
+
+  <span class="text-sm"> Page {{ currentPage }} sur {{ totalPages }} </span>
+
   <button
     [disabled]="currentPage === totalPages"
-    (click)="changePage(currentPage + 1)"
+    (click)="onNext()"
+    class="btn btn-outline btn-sm disabled:btn-disabled transition duration-200 ease-in-out hover:bg-gray-300"
   >
     Suivant
   </button>

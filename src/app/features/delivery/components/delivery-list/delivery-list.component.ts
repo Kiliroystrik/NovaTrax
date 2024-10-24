@@ -15,11 +15,28 @@ import { RouterModule } from '@angular/router';
 import { Delivery } from '../../interfaces/Delivery';
 import { DeliveryService } from '../../services/delivery-service';
 import { PlannerComponent } from '../../../planner/components/planner/planner.component';
+import { DeliveryFilterComponent } from './delivery-filter/delivery-filter.component';
+import { DeliveryActionsComponent } from './delivery-actions/delivery-actions.component';
+import { DeliveryTableComponent } from './delivery-table/delivery-table.component';
+import { DeliveryCardComponent } from './delivery-card/delivery-card.component';
+import { DeliveryPaginationComponent } from './delivery-pagination/delivery-pagination.component';
+import { DeliveryItemComponent } from './delivery-item/delivery-item.component';
 
 @Component({
   selector: 'app-delivery-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, PlannerComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    PlannerComponent,
+    DeliveryFilterComponent,
+    DeliveryActionsComponent,
+    DeliveryTableComponent,
+    DeliveryCardComponent,
+    DeliveryPaginationComponent,
+    DeliveryItemComponent,
+  ],
   templateUrl: './delivery-list.component.html',
   styleUrls: ['./delivery-list.component.scss'],
 })
@@ -39,7 +56,6 @@ export class DeliveryListComponent implements OnInit, OnChanges {
   currentPage: number = 1; // Page courante pour la pagination
   itemsPerPage: number = 10; // Nombre d'éléments par page
 
-  selectAll: boolean = false; // Booléen pour savoir si toutes les livraisons sont sélectionnées
   selectedDeliveries: Delivery[] = []; // Livraisons sélectionnées par l'utilisateur
 
   // ---------- Filtering ----------
@@ -65,6 +81,67 @@ export class DeliveryListComponent implements OnInit, OnChanges {
       this.getAllProductTypes(); // Mettre à jour la liste des types de produits
       this.applyFilter(); // Réappliquer les filtres
     }
+  }
+
+  /**
+   * Méthode pour créer une nouvelle tournée avec les livraisons sélectionnées.
+   */
+  public onCreateTour(): void {
+    if (this.selectedDeliveries.length > 0) {
+      console.log(
+        "Création d'une nouvelle tournée avec les livraisons:",
+        this.selectedDeliveries.map((d) => d.id)
+      );
+      // Implémentez la logique pour créer une tournée ici
+    } else {
+      console.warn(
+        'Aucune livraison sélectionnée pour la création de tournée.'
+      );
+    }
+  }
+
+  // Méthodes pour gérer les événements provenant du composant de filtre
+  onSelectedProductTypesChange(selectedProductTypes: string[]): void {
+    this.selectedProductTypes = selectedProductTypes;
+    this.applyFilter();
+  }
+
+  onSelectedPostalCodesChange(selectedPostalCodes: string[]): void {
+    this.selectedPostalCodes = selectedPostalCodes;
+    this.applyFilter();
+  }
+
+  onSelectedStatusesChange(selectedStatuses: string[]): void {
+    this.selectedStatuses = selectedStatuses;
+    this.applyFilter();
+  }
+
+  // Les méthodes de suppression de filtres
+  removePostalCode(postalCode: string): void {
+    this.selectedPostalCodes = this.selectedPostalCodes.filter(
+      (code) => code !== postalCode
+    );
+    this.applyFilter();
+  }
+
+  removeStatus(status: string): void {
+    this.selectedStatuses = this.selectedStatuses.filter((s) => s !== status);
+    this.applyFilter();
+  }
+
+  removeProductType(productType: string): void {
+    this.selectedProductTypes = this.selectedProductTypes.filter(
+      (type) => type !== productType
+    );
+    this.applyFilter();
+  }
+
+  // Méthode pour réinitialiser tous les filtres
+  clearAllFilters(): void {
+    this.selectedPostalCodes = [];
+    this.selectedStatuses = [];
+    this.selectedProductTypes = [];
+    this.applyFilter();
   }
 
   // ---------- Filtering Methods ----------
@@ -104,25 +181,6 @@ export class DeliveryListComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Filtre les livraisons par type de produit.
-   * @param productType Le type de produit sélectionné.
-   * @param event L'événement de changement de l'input checkbox.
-   */
-  filterByProductType(productType: string, event: Event): void {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    if (isChecked) {
-      if (!this.selectedProductTypes.includes(productType)) {
-        this.selectedProductTypes.push(productType);
-      }
-    } else {
-      this.selectedProductTypes = this.selectedProductTypes.filter(
-        (type) => type !== productType
-      );
-    }
-    this.applyFilter(); // Réappliquer le filtre après modification
-  }
-
-  /**
    * Récupère tous les types de produits uniques à partir des livraisons.
    */
   getAllProductTypes(): void {
@@ -143,88 +201,6 @@ export class DeliveryListComponent implements OnInit, OnChanges {
     } else {
       this.productTypes = [];
     }
-  }
-
-  /**
-   * Filtre les livraisons par code postal.
-   * @param postalCode Le code postal sélectionné.
-   * @param event L'événement de changement de l'input checkbox.
-   */
-  filterByPostalCode(postalCode: string, event: Event): void {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    if (isChecked) {
-      if (!this.selectedPostalCodes.includes(postalCode)) {
-        this.selectedPostalCodes.push(postalCode);
-      }
-    } else {
-      this.selectedPostalCodes = this.selectedPostalCodes.filter(
-        (code) => code !== postalCode
-      );
-    }
-    this.applyFilter(); // Réappliquer le filtre après modification
-  }
-
-  /**
-   * Vide la liste des codes postaux.
-   */
-  clearPostalCodes(): void {
-    this.selectedPostalCodes = [];
-    this.applyFilter(); // Réappliquer le filtre après modification
-  }
-
-  /**
-   * Vide la liste des types de produits.
-   */
-  clearProductTypes(): void {
-    this.selectedProductTypes = [];
-    this.applyFilter(); // Réappliquer le filtre après modification
-  }
-
-  /**
-   * Filtre sur les statuts des livraisons.
-   * @param status Le statut sélectionné.
-   * @param event L'événement de changement de l'input checkbox.
-   */
-  filterByStatus(status: string, event: Event): void {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    if (isChecked) {
-      if (!this.selectedStatuses.includes(status)) {
-        this.selectedStatuses.push(status);
-      }
-    } else {
-      this.selectedStatuses = this.selectedStatuses.filter((s) => s !== status);
-    }
-    this.applyFilter(); // Réappliquer le filtre après modification
-  }
-
-  // Méthode pour supprimer un code postal du filtre
-  removePostalCode(postalCode: string): void {
-    this.selectedPostalCodes = this.selectedPostalCodes.filter(
-      (code) => code !== postalCode
-    );
-    this.applyFilter(); // Réappliquer les filtres après modification
-  }
-
-  // Méthode pour supprimer un statut du filtre
-  removeStatus(status: string): void {
-    this.selectedStatuses = this.selectedStatuses.filter((s) => s !== status);
-    this.applyFilter(); // Réappliquer les filtres après modification
-  }
-
-  // Méthode pour supprimer un type de produit du filtre
-  removeProductType(productType: string): void {
-    this.selectedProductTypes = this.selectedProductTypes.filter(
-      (type) => type !== productType
-    );
-    this.applyFilter(); // Réappliquer les filtres après modification
-  }
-
-  // Méthode pour réinitialiser tous les filtres
-  clearAllFilters(): void {
-    this.selectedPostalCodes = [];
-    this.selectedStatuses = [];
-    this.selectedProductTypes = [];
-    this.applyFilter(); // Réappliquer les filtres après réinitialisation
   }
 
   // ---------- Sorting Methods ----------
@@ -276,7 +252,6 @@ export class DeliveryListComponent implements OnInit, OnChanges {
           (d) => d.id !== delivery.id
         );
       });
-      this.selectAll = false;
     } else {
       // Sinon, on sélectionne toutes les livraisons de la page courante
       currentPageDeliveries.forEach((delivery) => {
@@ -284,7 +259,6 @@ export class DeliveryListComponent implements OnInit, OnChanges {
           this.selectedDeliveries.push(delivery);
         }
       });
-      this.selectAll = true;
     }
     this.assignmentsUpdate(); // Met à jour l'état de sélection
   }
@@ -306,7 +280,6 @@ export class DeliveryListComponent implements OnInit, OnChanges {
 
     if (index > -1) {
       this.selectedDeliveries.splice(index, 1);
-      this.selectAll = false;
     } else {
       const delivery = this.deliveries.find((d) => d.id === id);
       if (delivery) {
@@ -394,44 +367,6 @@ export class DeliveryListComponent implements OnInit, OnChanges {
       this.assignToTour.emit(this.selectedDeliveries.map((d) => d.id));
     } else {
       console.warn('Aucune livraison sélectionnée pour l’assignation.');
-    }
-  }
-
-  getBadgeClass(status: string): string {
-    switch (status) {
-      case 'Delivered':
-        return 'badge-success text-white'; // Vert pour Delivered
-      case 'In Transit':
-        return 'badge-warning text-white'; // Jaune pour In Transit
-      case 'Scheduled':
-        return 'badge-primary text-white'; // Bleu pour Scheduled
-      case 'Failed':
-        return 'badge-error text-white'; // Rouge pour Failed
-      case 'Pending':
-        return 'badge-warning text-white'; // Jaune pour Pending
-      default:
-        return 'badge-neutral text-white'; // Gris pour les statuts non gérés
-    }
-  }
-
-  /**
-   * Traduis les status de livraisons.
-   * @param status Le statut de livraison à traduire.
-   */
-  translateStatus(status: string): string {
-    switch (status) {
-      case 'Pending':
-        return 'En attente';
-      case 'In Transit':
-        return 'En transit';
-      case 'Scheduled':
-        return 'Programmé';
-      case 'Failed':
-        return 'Echoué';
-      case 'Delivered':
-        return 'Livrée';
-      default:
-        return 'Status non reconnu';
     }
   }
 }

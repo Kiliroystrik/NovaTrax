@@ -8,11 +8,20 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './delivery-pagination.component.scss',
 })
 export class DeliveryPaginationComponent {
-  @Input() currentPage!: number;
-  @Input() totalPages!: number;
-  @Output() pageChange = new EventEmitter<number>();
+  @Input() currentPage: number = 1;
+  @Input() totalPages: number = 1;
 
-  changePage(page: number) {
-    this.pageChange.emit(page);
+  @Output() changePage = new EventEmitter<number>();
+
+  onPrevious(): void {
+    if (this.currentPage > 1) {
+      this.changePage.emit(this.currentPage - 1);
+    }
+  }
+
+  onNext(): void {
+    if (this.currentPage < this.totalPages) {
+      this.changePage.emit(this.currentPage + 1);
+    }
   }
 }

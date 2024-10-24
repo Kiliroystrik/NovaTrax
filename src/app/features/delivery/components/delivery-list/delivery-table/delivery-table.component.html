@@ -1,37 +1,39 @@
-<table class="min-w-full divide-y">
-  <thead>
-    <tr>
-      <th>...</th>
-      <!-- Autres colonnes -->
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let delivery of deliveries">
-      <td>
-        <input
-          type="checkbox"
-          [checked]="isSelected(delivery.id)"
-          (change)="onToggleSelection(delivery.id)"
-        />
-      </td>
-      <td>{{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm" }}</td>
-      <td>{{ delivery.geocodedAddress.postalCode }}</td>
-      <td>{{ delivery.productDeliveries[0]?.product?.name || "N/A" }}</td>
-      <td>{{ delivery.productDeliveries[0]?.product?.type || "N/A" }}</td>
-      <td>{{ delivery.productDeliveries[0]?.quantity || "N/A" }}</td>
-      <td>
-        <span class="badge" [ngClass]="getBadgeClass(delivery.status.name)">
-          {{ translateStatus(delivery.status.name) }}
-        </span>
-      </td>
-      <td>
-        <button
-          class="btn btn-sm btn-error"
-          (click)="onDeleteDelivery(delivery.id)"
-        >
-          Supprimer
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="grid grid-cols-8 gap-4 p-4 bg-base rounded-lg shadow-md">
+  <!-- Checkbox -->
+  <div class="col-span-1 flex items-center">
+    <input
+      type="checkbox"
+      [checked]="isAllSelected()"
+      (change)="onToggleSelectAll()"
+      aria-label="Sélectionner toutes les livraisons"
+      class="form-checkbox h-4 w-4 text-indigo-600"
+    />
+    <span class="ml-2">
+      {{ selectedDeliveries.length }} / {{ deliveries.length }}
+    </span>
+  </div>
+
+  <!-- En-têtes de colonnes -->
+  <div class="col-span-1 font-semibold">Date Prévue</div>
+  <div class="col-span-1 font-semibold">Adresse</div>
+  <div class="col-span-1 font-semibold">Produit</div>
+  <div class="col-span-1 font-semibold">Type</div>
+  <div class="col-span-1 font-semibold">Quantité</div>
+  <div class="col-span-1 font-semibold">Statut</div>
+  <div class="col-span-1 font-semibold">Actions</div>
+</div>
+
+<!-- Liste des Livraisons -->
+<div>
+  @for(delivery of deliveries; track delivery.id){
+
+  <app-delivery-item
+    [delivery]="delivery"
+    [isSelected]="isSelected(delivery.id)"
+    viewMode="table"
+    (toggleSelection)="toggleSelection.emit($event)"
+    (deleteDelivery)="deleteDelivery.emit($event)"
+  ></app-delivery-item>
+
+  }
+</div>

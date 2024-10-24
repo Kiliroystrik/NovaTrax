@@ -1,63 +1,162 @@
-<tr>
-  <td class="px-6 py-4 whitespace-nowrap text-sm">
-    <input
-      type="checkbox"
-      [checked]="isSelected"
-      (change)="onToggleSelection()"
-    />
-  </td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm">
-    {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm" : "UTC" }}
-  </td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm">
-    {{ delivery.geocodedAddress.postalCode }}
-  </td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm">
-    <ul>
-      @for (product of delivery.productDeliveries; track product.id) {
-      <li>
-        {{ product.product.name }}
-      </li>
-      }
-    </ul>
-  </td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm">
-    <ul>
-      @for (product of delivery.productDeliveries; track product.id) {
-      <li>
-        {{ product.product.type }}
-      </li>
-      }
-    </ul>
-  </td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm">
-    <ul>
-      @for (product of delivery.productDeliveries; track product.id) {
-      <li>
-        {{ product.quantity }}
-      </li>
-      }
-    </ul>
-  </td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm">
-    <span class="badge" [ngClass]="getBadgeClass(delivery.status.name)">
-      {{ translateStatus(delivery.status.name) }}
-    </span>
-  </td>
-  <td class="px-6 py-4 whitespace-nowrap text-sm">
-    <div class="flex gap-1">
+<!-- Mode Table -->
+<ng-container *ngIf="viewMode === 'table'">
+  <tr class="grid grid-cols-8 gap-4 p-4 hover:bg-base-200">
+    <!-- Case à Cocher pour Sélectionner la Livraison -->
+    <td class="text-wrap text-sm">
+      <input
+        type="checkbox"
+        [checked]="isSelected"
+        (change)="toggleSelection.emit(delivery.id)"
+      />
+    </td>
+    <td class="text-wrap text-sm">
+      {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm" : "UTC" }}
+    </td>
+    <td class="text-wrap text-sm">
+      {{ delivery.geocodedAddress.postalCode }}<br />
+    </td>
+    <td class="text-wrap text-sm">
+      <ng-container
+        *ngIf="delivery.productDeliveries.length > 0; else noProducts"
+      >
+        <ul>
+          <li *ngFor="let pd of delivery.productDeliveries">
+            {{ pd.product.name }}
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #noProducts>N/A</ng-template>
+    </td>
+    <td class="text-wrap text-sm">
+      <ng-container *ngIf="delivery.productDeliveries.length > 0; else noTypes">
+        <ul>
+          <li *ngFor="let pd of delivery.productDeliveries">
+            {{ pd.product.type }}
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #noTypes>N/A</ng-template>
+    </td>
+    <td class="text-wrap text-sm">
+      <ng-container
+        *ngIf="delivery.productDeliveries.length > 0; else noQuantities"
+      >
+        <ul>
+          <li *ngFor="let pd of delivery.productDeliveries">
+            {{ pd.quantity }}
+          </li>
+        </ul>
+      </ng-container>
+      <ng-template #noQuantities>N/A</ng-template>
+    </td>
+    <td class="text-wrap text-sm">
+      <span class="badge" [ngClass]="getBadgeClass(delivery.status.name)">
+        {{ translateStatus(delivery.status.name) }}
+      </span>
+    </td>
+    <td class="text-sm">
+      <div class="flex gap-1 flex-wrap">
+        <button
+          [routerLink]="['/livraisons', delivery.id]"
+          class="btn btn-sm btn-primary flex items-center space-x-2"
+        >
+          <span>Voir</span>
+        </button>
+        <button
+          [routerLink]="['/livraisons', delivery.id, 'edit']"
+          class="btn btn-sm btn-secondary flex items-center space-x-2"
+        >
+          <span>Modifier</span>
+        </button>
+        <button
+          (click)="deleteDelivery.emit(delivery.id)"
+          class="btn btn-sm btn-error flex items-center space-x-2"
+        >
+          <span>Supprimer</span>
+        </button>
+      </div>
+    </td>
+  </tr>
+</ng-container>
+
+<!-- Mode Card -->
+<ng-container *ngIf="viewMode === 'card'">
+  <div class="card shadow-md rounded-lg p-4">
+    <!-- Case à Cocher pour Sélectionner la Livraison -->
+    <div class="flex items-center mb-2">
+      <input
+        type="checkbox"
+        [checked]="isSelected"
+        (change)="toggleSelection.emit(delivery.id)"
+        class="form-checkbox h-4 w-4 transition duration-150 ease-in-out"
+      />
+      <span class="ml-2 font-semibold">
+        {{ delivery.expectedDeliveryDate | date : "dd/MM/yyyy HH:mm" : "UTC" }}
+      </span>
+    </div>
+
+    <!-- Adresse -->
+    <div class="mb-2">
+      <span class="font-semibold">Adresse:</span>
+      <span>{{ delivery.geocodedAddress.postalCode }}</span>
+    </div>
+
+    <!-- Produit et Quantité -->
+    <ng-container
+      *ngIf="delivery.productDeliveries.length > 0; else noProducts"
+    >
+      <div *ngFor="let pd of delivery.productDeliveries" class="mb-2">
+        <span class="font-semibold">Produit:</span>
+        <span>{{ pd.product.name }}</span>
+      </div>
+      <div *ngFor="let pd of delivery.productDeliveries" class="mb-2">
+        <span class="font-semibold">Type:</span>
+        <span>{{ pd.product.type }}</span>
+      </div>
+      <div *ngFor="let pd of delivery.productDeliveries" class="mb-2">
+        <span class="font-semibold">Quantité:</span>
+        <span>{{ pd.quantity }}</span>
+      </div>
+    </ng-container>
+    <ng-template #noProducts>
+      <div class="mb-2">
+        <span class="font-semibold">Produit:</span>
+        <span>N/A</span>
+      </div>
+      <div class="mb-2">
+        <span class="font-semibold">Quantité:</span>
+        <span>N/A</span>
+      </div>
+    </ng-template>
+
+    <!-- Statut -->
+    <div class="mb-2">
+      <span class="font-semibold">Statut:</span>
+      <span class="badge" [ngClass]="getBadgeClass(delivery.status.name)">
+        {{ translateStatus(delivery.status.name) }}
+      </span>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex space-x-2 mt-4">
       <button
         [routerLink]="['/livraisons', delivery.id]"
-        class="btn btn-sm btn-primary"
+        class="btn btn-sm btn-primary flex items-center space-x-2"
       >
-        Voir
+        <span>Voir</span>
       </button>
       <button
         [routerLink]="['/livraisons', delivery.id, 'edit']"
-        class="btn btn-sm btn-secondary"
+        class="btn btn-sm btn-secondary flex items-center space-x-2"
       >
-        Modifier
+        <span>Modifier</span>
+      </button>
+      <button
+        (click)="deleteDelivery.emit(delivery.id)"
+        class="btn btn-sm btn-error flex items-center space-x-2"
+      >
+        <span>Supprimer</span>
       </button>
     </div>
-  </td>
-</tr>
+  </div>
+</ng-container>

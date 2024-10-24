@@ -17,3 +17,9 @@
   font-size: 0.9em;
   width: 3em;
 }
+
+:root {
+  --fc-button-bg-color: oklch(var(--n));
+  --fc-button-active-bg-color: oklch(var(--p));
+  --fc-today-bg-color: oklch(var(--a));
+}

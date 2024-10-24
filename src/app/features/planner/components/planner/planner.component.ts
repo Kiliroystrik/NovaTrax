@@ -12,6 +12,7 @@ import { DeliveryListComponent } from '../../../delivery/components/delivery-lis
 import { TourService } from '../../../tour/services/tour.service';
 import { TourDeliveriesAssociationComponent } from '../../../tour/components/tour-deliveries-association/tour-deliveries-association.component';
 import { FormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-planner',
@@ -21,6 +22,7 @@ import { FormsModule } from '@angular/forms';
     DeliveryListComponent,
     TourDeliveriesAssociationComponent,
     FormsModule,
+    DatePipe,
   ],
   templateUrl: './planner.component.html',
   styleUrls: ['./planner.component.scss'],
@@ -46,6 +48,7 @@ export class PlannerComponent implements OnInit {
       center: 'title',
       right: 'dayGridMonth,timeGridWeek',
     },
+    locale: 'fr',
     events: [], // Événements affichés dans le calendrier
     selectable: false, // Permet la sélection des dates et des heures
     unselectAuto: false, // Ne désélectionne pas automatiquement
